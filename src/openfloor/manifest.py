@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any, Iterator, Tuple
-from .json_serializable import JsonSerializableDict
+from .json_serializable import JsonSerializableDict, JsonSerializableDataclass
 
 @dataclass
-class Identification(JsonSerializableDict):
+class Identification(JsonSerializableDataclass):
     """Represents the identification section of a conversant"""
     speakerUri: str
     serviceUrl: str
@@ -12,6 +12,13 @@ class Identification(JsonSerializableDict):
     department: Optional[str] = None
     role: Optional[str] = None
     synopsis: Optional[str] = None
+
+    def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        if self.speakerUri is None:
+            raise ValueError("speakerUri is required to create an instance of the Identification class")
+        if self.serviceUrl is None:
+            raise ValueError("serviceUrl is required to create an instance of the Identification class")
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Identification instance to JSON-compatible dictionary"""
@@ -27,20 +34,9 @@ class Identification(JsonSerializableDict):
             yield 'role', self.role
         if self.synopsis is not None:
             yield 'synopsis', self.synopsis
-    
-    def __post_init__(self):
-        if self.speakerUri is None:
-            raise ValueError("speakerUri is required to create an instance of the Identification class")
-        if self.serviceUrl is None:
-            raise ValueError("serviceUrl is required to create an instance of the Identification class")
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Identification':
-        """Create an Identification instance from a dictionary"""
-        return cls(**data)
 
 @dataclass
-class SupportedLayers(JsonSerializableDict):
+class SupportedLayers(JsonSerializableDataclass):
     """Represents the supported input and output layers for a capability"""
     input: List[str] = field(default_factory=lambda: ["text"])
     output: List[str] = field(default_factory=lambda: ["text"])
@@ -50,13 +46,8 @@ class SupportedLayers(JsonSerializableDict):
         yield 'input', self.input
         yield 'output', self.output
 
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'SupportedLayers':
-        """Create a SupportedLayers instance from a dictionary"""
-        return cls(**data)
-
 @dataclass
-class Capability(JsonSerializableDict):
+class Capability(JsonSerializableDataclass):
     """Represents a single capability in the capabilities array"""
     keyphrases: List[str]
     descriptions: List[str]
@@ -64,6 +55,7 @@ class Capability(JsonSerializableDict):
     supportedLayers: Optional[SupportedLayers] = None
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
         if self.supportedLayers is None:
             self.supportedLayers = SupportedLayers()
 
@@ -84,10 +76,10 @@ class Capability(JsonSerializableDict):
         return cls(**data)
 
 @dataclass
-class Manifest(JsonSerializableDict):
+class Manifest(JsonSerializableDataclass):
     """Represents an Assistant Manifest according to the specification"""
     identification: Identification
-    capabilities: List[Capability]
+    capabilities: List[Capability] = field(default_factory=list)
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Manifest instance to JSON-compatible dictionary"""

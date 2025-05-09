@@ -1,16 +1,22 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any, Iterator, Tuple
 from datetime import datetime
-from .json_serializable import JsonSerializableDict, JsonSerializableList
+from .json_serializable import JsonSerializableDict, JsonSerializableList, JsonSerializableDataclass
 from .manifest import Identification
 from .dialog_event import DialogHistory
 import uuid
+import json
 
 @dataclass
-class Schema(JsonSerializableDict):
+class Schema(JsonSerializableDataclass):
     """Represents the schema section of an Open Floor message envelope"""
     version: str = "1.0.0"
     url: Optional[str] = None
+
+    def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        if self.version is None:
+            self.version="1.0.0"
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Schema instance to JSON-compatible dictionary"""
@@ -18,45 +24,48 @@ class Schema(JsonSerializableDict):
         if self.url is not None:
             yield 'url', self.url
 
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Schema':
-        """Create a Schema instance from a dictionary"""
-        return cls(**data)
-    
-    def __post_init__(self):
-        if self.version is None:
-            self.version="1.0.0"
+class Parameters(JsonSerializableDict):
+    """Represents a dictionary of parameters that can be serialized to JSON"""
+    pass
+
+class PersistentState(JsonSerializableDict):
+    """Represents the persistent state of a conversant that can be serialized to JSON"""
+    pass
 
 @dataclass
-class Conversant(JsonSerializableDict):
+class Conversant(JsonSerializableDataclass):
     """Represents a conversant in the conversation"""
     identification: Identification
-    persistentState: Dict[str, Any] = field(default_factory=dict)
+    persistentState: PersistentState = field(default_factory=PersistentState)
+
+    def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        if self.identification is None:
+            raise ValueError("identification is required for the Conversant")
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Conversant instance to JSON-compatible dictionary"""
         yield 'identification', dict(self.identification)
         if self.persistentState:
-            yield 'persistentState', self.persistentState
-
-    def __post_init__(self):
-        if self.identification is None:
-            raise ValueError("identification is required for the Conversant")
+            yield 'persistentState', dict(self.persistentState)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Conversant':
         """Create a Conversant instance from a dictionary"""
         if 'identification' in data:
             data['identification'] = Identification.from_dict(data['identification'])
+        if 'persistentState' in data:
+            data['persistentState'] = PersistentState(data['persistentState'])
         return cls(**data)
 
 @dataclass
-class Conversation(JsonSerializableDict):
+class Conversation(JsonSerializableDataclass):
     """Represents the conversation section of an Open Floor message envelope"""
     id: Optional[str] = None
     conversants: List[Conversant] = field(default_factory=list)
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
         if self.id is None:
             self.id = f"conv:{uuid.uuid4()}"
 
@@ -74,7 +83,7 @@ class Conversation(JsonSerializableDict):
         return cls(**data)
 
 @dataclass
-class Sender(JsonSerializableDict):
+class Sender(JsonSerializableDataclass):
     """Represents the sender section of an Open Floor message envelope"""
     speakerUri: str
     serviceUrl: Optional[str] = None
@@ -85,19 +94,15 @@ class Sender(JsonSerializableDict):
         if self.serviceUrl is not None:
             yield 'serviceUrl', self.serviceUrl
 
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Sender':
-        """Create a Sender instance from a dictionary"""
-        return cls(**data)
-
 @dataclass
-class To(JsonSerializableDict):
+class To(JsonSerializableDataclass):
     """Represents the 'to' section of an event"""
     speakerUri: Optional[str] = None
     serviceUrl: Optional[str] = None
     private: bool = False
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
         if self.speakerUri is None and self.serviceUrl is None:
             raise ValueError("Must specify either speakerUri or serviceUrl")
 
@@ -110,22 +115,8 @@ class To(JsonSerializableDict):
         if self.private:
             yield 'private', self.private
 
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'To':
-        """Create a To instance from a dictionary"""
-        return cls(**data)
-
 @dataclass
-class Parameters(JsonSerializableDict):
-    """Represents a dictionary of parameters that can be serialized to JSON"""
-    def __init__(self, *args, **kwargs):
-        self._data = {}
-        if args and isinstance(args[0], dict):
-            self._data.update(args[0])
-        self._data.update(kwargs)
-
-@dataclass
-class Event(JsonSerializableDict):
+class Event(JsonSerializableDataclass):
     """Represents an event in the events section of an Open Floor message envelope"""
     eventType: str
     to: Optional[To] = None
@@ -133,6 +124,7 @@ class Event(JsonSerializableDict):
     parameters: Parameters = field(default_factory=Parameters)
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
         if isinstance(self.parameters, dict):
             self.parameters = Parameters(self.parameters)
 
@@ -156,7 +148,7 @@ class Event(JsonSerializableDict):
         return cls(**data)
     
 @dataclass
-class Envelope(JsonSerializableDict):
+class Envelope(JsonSerializableDataclass):
     """Represents the root Open Floor message envelope"""
     conversation: Conversation
     sender: Sender
@@ -168,8 +160,37 @@ class Envelope(JsonSerializableDict):
         yield 'schema', dict(self.schema)
         yield 'conversation', dict(self.conversation)
         yield 'sender', dict(self.sender)
-        if self.events:
-            yield 'events', [dict(event) for event in self.events]
+        yield 'events', [dict(event) for event in self.events]
+
+    def to_json(self, as_payload: bool = False, **kwargs) -> str:
+        """Convert to JSON string, optionally wrapped in a payload"""
+        if as_payload:
+            return Payload(openFloor=self).to_json(**kwargs)
+        return super().to_json(**kwargs)
+
+    def to_file(self, filename: str, as_payload: bool = False, **kwargs) -> None:
+        """Save to JSON file, optionally wrapped in a payload"""
+        if as_payload:
+            Payload(openFloor=self).to_file(filename, **kwargs)
+        else:
+            super().to_file(filename, **kwargs)
+
+    @classmethod
+    def from_json(cls, json_str: str, as_payload: bool = False, **kwargs) -> 'Envelope':
+        """Create from JSON string, optionally unwrapped from a payload"""
+        if as_payload:
+            payload = Payload.from_json(json_str, **kwargs)
+            return payload.openFloor
+        return cls.from_dict(json.loads(json_str, **kwargs))
+
+    @classmethod
+    def from_file(cls, filename: str, as_payload: bool = False, **kwargs) -> 'Envelope':
+        """Create from JSON file, optionally unwrapped from a payload"""
+        if as_payload:
+            payload = Payload.from_file(filename, **kwargs)
+            return payload.openFloor
+        with open(filename, 'r') as f:
+            return cls.from_dict(json.load(f, **kwargs))
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Envelope':
@@ -185,66 +206,22 @@ class Envelope(JsonSerializableDict):
         return cls(**data)
 
 @dataclass
-class SupportedLayers(JsonSerializableDict):
-    """Represents the supported input and output layers for a capability"""
-    input: List[str] = field(default_factory=lambda: ["text"])
-    output: List[str] = field(default_factory=lambda: ["text"])
+class Payload(JsonSerializableDataclass):
+    """Represents a payload containing an Open Floor message envelope"""
+    openFloor: Envelope
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
-        """Convert SupportedLayers instance to JSON-compatible dictionary"""
-        yield 'input', self.input
-        yield 'output', self.output
+        """Convert Payload instance to JSON-compatible dictionary"""
+        yield 'openFloor', dict(self.openFloor)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'SupportedLayers':
-        """Create a SupportedLayers instance from a dictionary"""
+    def from_dict(cls, data: Dict[str, Any]) -> 'Payload':
+        """Create a Payload instance from a dictionary"""
+        if 'openFloor' in data:
+            data['openFloor'] = Envelope.from_dict(data['openFloor'])
         return cls(**data)
+    
+    
 
-@dataclass
-class Capability(JsonSerializableDict):
-    """Represents a single capability in the capabilities array"""
-    keyphrases: List[str]
-    descriptions: List[str]
-    languages: Optional[List[str]] = None
-    supportedLayers: Optional[SupportedLayers] = None
-
-    def __post_init__(self):
-        if self.supportedLayers is None:
-            self.supportedLayers = SupportedLayers()
-
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
-        """Convert Capability instance to JSON-compatible dictionary"""
-        yield 'keyphrases', self.keyphrases
-        yield 'descriptions', self.descriptions
-        if self.languages is not None:
-            yield 'languages', self.languages
-        if self.supportedLayers is not None:
-            yield 'supportedLayers', dict(self.supportedLayers)
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Capability':
-        """Create a Capability instance from a dictionary"""
-        if 'supportedLayers' in data:
-            data['supportedLayers'] = SupportedLayers.from_dict(data['supportedLayers'])
-        return cls(**data)
-
-@dataclass
-class Manifest(JsonSerializableDict):
-    """Represents an Assistant Manifest according to the specification"""
-    identification: Identification
-    capabilities: List[Capability]
-
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
-        """Convert Manifest instance to JSON-compatible dictionary"""
-        yield 'identification', dict(self.identification)
-        yield 'capabilities', [dict(capability) for capability in self.capabilities]
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Manifest':
-        """Create a Manifest instance from a dictionary"""
-        if 'identification' in data:
-            data['identification'] = Identification.from_dict(data['identification'])
-        if 'capabilities' in data:
-            data['capabilities'] = [Capability.from_dict(cap) for cap in data['capabilities']]
-        return cls(**data) 
+    
     

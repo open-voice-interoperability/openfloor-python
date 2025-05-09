@@ -19,6 +19,7 @@ __all__ = [
     "To", 
     "Event", 
     "Parameters",
+    "PersistentState",
     "Envelope", 
     "SupportedLayers", 
     "Capability", 

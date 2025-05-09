@@ -5,7 +5,7 @@ from enum import Enum
 from abc import ABC
 import json
 from jsonpath_ng import jsonpath, parse
-from .json_serializable import JsonSerializableList, JsonSerializableDict
+from .json_serializable import JsonSerializableList, JsonSerializableDict, JsonSerializableDataclass
 import uuid
 
 def get_isosplit(s: str, split: str) -> Tuple[int, str]:
@@ -67,7 +67,7 @@ def timedelta_to_iso_duration(td: timedelta) -> str:
     return f"PT{''.join(parts)}"
 
 @dataclass
-class Span(JsonSerializableDict):
+class Span(JsonSerializableDataclass):
     """Represents a time span for a dialog event or token"""
     startTime: Optional[datetime] = None
     startOffset: Optional[timedelta] = None  # Duration as timedelta
@@ -75,6 +75,8 @@ class Span(JsonSerializableDict):
     endOffset: Optional[timedelta] = None  # Duration as timedelta
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        super().__init__()
         if self.endTime is None and self.startOffset is None: # Default to now if there is no startOffset
             self.startTime = datetime.now()
         if self.startTime is not None and self.startOffset is not None:
@@ -109,7 +111,7 @@ class Span(JsonSerializableDict):
         return cls(**data)
 
 @dataclass
-class Token(JsonSerializableDict):
+class Token(JsonSerializableDataclass):
     """Represents a single token in a feature"""
     value: Optional[Any] = None
     valueUrl: Optional[str] = None
@@ -118,6 +120,8 @@ class Token(JsonSerializableDict):
     links: List[str] = field(default_factory=list)  # JSON Path references
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        super().__init__()
         if self.value is None and self.valueUrl is None:
             raise ValueError("Must specify either value or valueUrl")
         if self.value is not None and self.valueUrl is not None:
@@ -156,7 +160,7 @@ class Token(JsonSerializableDict):
         return values
 
 @dataclass
-class Feature(JsonSerializableDict):
+class Feature(JsonSerializableDataclass):
     """Represents a feature in a dialog event"""
     mimeType: str
     tokens: List[Token] = field(default_factory=list)
@@ -166,6 +170,8 @@ class Feature(JsonSerializableDict):
     tokenSchema: Optional[str] = None  # e.g., "BertTokenizer.from_pretrained(bert-base-uncased)"
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        super().__init__()
         if self.encoding is not None and self.encoding not in ["ISO-8859-1", "UTF-8", "iso-8859-1", "utf-8"]:
             raise ValueError("Encoding must be either 'ISO-8859-1', 'iso-8859-1', 'UTF-8', or 'utf-8'")
 
@@ -207,7 +213,7 @@ class TextFeature(Feature):
         yield from super().__iter__()
 
 @dataclass
-class DialogEvent(JsonSerializableDict):
+class DialogEvent(JsonSerializableDataclass):
     """Represents a dialog event according to the specification"""
     speakerUri: str
     id: Optional[str] = None
@@ -217,6 +223,8 @@ class DialogEvent(JsonSerializableDict):
     context: Optional[str] = None
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        super().__init__()
         if self.id is None:
             self.id = f"de:{uuid.uuid4()}"
         if not self.features:
@@ -242,42 +250,6 @@ class DialogEvent(JsonSerializableDict):
             data['features'] = {name: Feature.from_dict(feature) for name, feature in data['features'].items()}
         return cls(**data)
 
-@dataclass
 class DialogHistory(JsonSerializableList):
-    """Represents a history of dialog events"""
-    _events: List[DialogEvent] = field(default_factory=list)
+    pass
 
-    def __iter__(self) -> Iterator[Any]:
-        """Convert DialogHistory instance to JSON-compatible list"""
-        for event in self._events:
-            yield dict(event)
-
-    def append(self, event: DialogEvent) -> None:
-        """Add a dialog event to the history"""
-        self._events.append(event)
-
-    def extend(self, events: List[DialogEvent]) -> None:
-        """Add multiple dialog events to the history"""
-        self._events.extend(events)
-
-    def clear(self) -> None:
-        """Clear all events from the history"""
-        self._events.clear()
-
-    def __len__(self) -> int:
-        """Get the number of events in the history"""
-        return len(self._events)
-
-    def __getitem__(self, index: int) -> DialogEvent:
-        """Get an event by index"""
-        return self._events[index]
-
-    def __contains__(self, event: DialogEvent) -> bool:
-        """Check if an event is in the history"""
-        return event in self._events
-
-    @classmethod
-    def from_dict(cls, data: List[Dict[str, Any]]) -> 'DialogHistory':
-        """Create a DialogHistory instance from a list of dictionaries"""
-        events = [DialogEvent.from_dict(event) for event in data]
-        return cls(_events=events) 

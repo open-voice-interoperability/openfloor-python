@@ -9,12 +9,14 @@ class JsonSerializable(ABC):
     @abstractmethod
     def __iter__(self) -> Iterator[Any]:
         """Convert instance to JSON-compatible format"""
-        pass
-
+        raise NotImplementedError("Subclasses must implement this method")
+    
     def _serialize_value(self, value: Any) -> Any:
         """Helper method to recursively serialize values"""
-        if isinstance(value, JsonSerializable):
-            return value.__json__()
+        if isinstance(value, JsonSerializableList):
+            return [self._serialize_value(item) for item in value]
+        elif isinstance(value, (JsonSerializableDict, JsonSerializableDataclass)):
+            return {k: self._serialize_value(v) for k, v in value}
         elif isinstance(value, dict):
             return {k: self._serialize_value(v) for k, v in value.items()}
         elif hasattr(value, '__iter__') and not isinstance(value, (str, bytes)):
@@ -51,9 +53,13 @@ class JsonSerializable(ABC):
         return cls.from_dict(data)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'JsonSerializable':
-        """Create an instance from a dictionary"""
-        return cls(**data)
+    def from_dict(cls, data: Dict[str, Any]) -> 'JsonSerializableDict':
+        """Create an instance from a dictionary or instance"""
+        if isinstance(data, cls):
+            return data
+        if isinstance(data, dict):
+            return cls(**data)
+        raise TypeError(f"Cannot create {cls.__name__} from {type(data)}")
 
     def __json__(self):
         """Default JSON serialization method"""
@@ -66,8 +72,12 @@ class JsonSerializableDict(JsonSerializable):
         """Initialize with optional key-value pairs"""
         self._data = {}
         if args and isinstance(args[0], dict):
-            self._data.update(args[0])
-        self._data.update(kwargs)
+            # Initialize with dictionary from first argument
+            for key, value in args[0].items():
+                self.__setitem__(key, value)
+        # Initialize with keyword arguments
+        for key, value in kwargs.items():
+            self.__setitem__(key, value)
 
     def __getitem__(self, key: str) -> Any:
         """Get a value by key"""
@@ -84,7 +94,17 @@ class JsonSerializableDict(JsonSerializable):
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert instance to JSON-compatible dictionary"""
         for key, value in self._data.items():
-            yield key, value
+            # Convert nested objects to basic types
+            if isinstance(value, JsonSerializableList):
+                yield key, [self._serialize_value(item) for item in value]
+            elif isinstance(value, (JsonSerializableDict, JsonSerializableDataclass)):
+                yield key, {k: self._serialize_value(v) for k, v in value}
+            elif isinstance(value, list):
+                yield key, [self._serialize_value(item) for item in value]
+            elif isinstance(value, dict):
+                yield key, {k: self._serialize_value(v) for k, v in value.items()}
+            else:
+                yield key, value
 
     def __len__(self) -> int:
         """Get the number of items"""
@@ -96,11 +116,15 @@ class JsonSerializableDict(JsonSerializable):
 
     def get(self, key: str, default: Any = None) -> Any:
         """Get a value by key with a default value"""
-        return self._data.get(key, default)
+        try:
+            return self[key]
+        except KeyError:
+            return default
 
     def update(self, other: Dict[str, Any]) -> None:
         """Update with values from another dictionary"""
-        self._data.update(other)
+        for key, value in other.items():
+            self[key] = value
 
     def clear(self) -> None:
         """Clear all items"""
@@ -114,19 +138,50 @@ class JsonSerializableDict(JsonSerializable):
         """JSON serialization for dictionary-like objects"""
         return {k: self._serialize_value(v) for k, v in self}
 
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'JsonSerializableDict':
-        """Create an instance from a dictionary"""
-        return cls(**data)
-
 class JsonSerializableList(JsonSerializable):
     """Base class for JSON serializable objects that serialize to lists"""
     
+    def __init__(self, *args, **kwargs):
+        """Initialize with optional items"""
+        self._items = []
+        if args and isinstance(args[0], list):
+            self._items = list(args[0])
+        elif args:
+            self._items = list(args)
+
     def __iter__(self) -> Iterator[Any]:
-        """Convert instance to JSON-compatible list by iterating over dataclass fields"""
-        for field_name, field_value in self.__dict__.items():
-            if not field_name.startswith('_'):  # Skip private fields
-                yield field_value
+        """Convert instance to JSON-compatible list"""
+        for item in self._items:
+            if isinstance(item, JsonSerializableDict) or isinstance(item, JsonSerializableDataclass):
+                yield dict(item)
+            elif isinstance(item, JsonSerializableList):
+                yield [i for i in item.__iter__()]
+            else:
+                yield self._serialize_value(item)
+
+    def append(self, item: Any) -> None:
+        """Add an item to the list"""
+        self._items.append(item)
+
+    def extend(self, items: List[Any]) -> None:
+        """Add multiple items to the list"""
+        self._items.extend(items)
+
+    def clear(self) -> None:
+        """Clear all items from the list"""
+        self._items.clear()
+
+    def __len__(self) -> int:
+        """Get the number of items in the list"""
+        return len(self._items)
+
+    def __getitem__(self, index: int) -> Any:
+        """Get an item by index"""
+        return self._items[index]
+
+    def __contains__(self, item: Any) -> bool:
+        """Check if an item is in the list"""
+        return item in self._items
 
     def __json__(self):
         """JSON serialization for list-like objects"""
@@ -139,11 +194,38 @@ class JsonSerializableList(JsonSerializable):
     def to_file(self, filepath: str, **kwargs) -> None:
         """Save instance to a JSON file"""
         with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(list(self), f, **kwargs) 
+            json.dump(list(self), f, **kwargs)
+
+class JsonSerializableDataclass(JsonSerializable):
+    """Base class for JSON serializable objects that are dataclasses"""
+
+    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+        """Convert instance to JSON-compatible dictionary by iterating over dataclass fields"""
+        for field_name, field_value in self.__dataclass_fields__.items():
+            if not field_name.startswith('_'):
+                value = getattr(self, field_name)
+                yield field_name, self._serialize_value(value)
+
+    def __json__(self):
+        """JSON serialization for dataclass objects"""
+        return {k: self._serialize_value(v) for k, v in self}
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'JsonSerializableDataclass':
+        """Create an instance from a dictionary"""
+        if isinstance(data, cls):
+            return data
+        if isinstance(data, dict):
+            return cls(**data)
+        raise TypeError(f"Cannot create {cls.__name__} from {type(data)}")
+
+    def copy(self) -> 'JsonSerializableDataclass':
+        """Create a copy of the dataclass"""
+        return self.__class__(**{k: getattr(self, k) for k in self.__dataclass_fields__ if not k.startswith('_')})
 
 
 def split_kwargs(cls: Type, kwargs: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    """Split kwargs into defined and undefined fields for a class.
+    """Split kwargs into defined and undefined fields for a dataclass class.
     
     Args:
         cls: The class to check fields against

@@ -9,9 +9,10 @@ class UtteranceEvent(Event):
     """Represents an utterance event in the conversation"""
     eventType: str = "utterance"
     dialogEvent: Optional[DialogEvent] = field(default=None, repr=False)
-    parameters: Parameters = field(default_factory=lambda: Parameters({"dialogEvent": None}))
+    parameters: Parameters = field(default_factory=Parameters)
 
     def __post_init__(self):
+        """Initialize after dataclass initialization"""
         if self.dialogEvent is not None:
             self.parameters["dialogEvent"] = self.dialogEvent
         if "dialogEvent" not in self.parameters or not isinstance(self.parameters["dialogEvent"], DialogEvent):
@@ -32,7 +33,7 @@ class ContextEvent(Event):
     """Represents a context event providing additional information to recipient agents"""
     eventType: str = "context"
     dialogHistory: Optional[DialogHistory] = field(default=None, repr=False)
-    parameters: Parameters = field(default_factory=lambda: Parameters(dialogHistory=None, other={}))
+    parameters: Parameters = field(default_factory=lambda: Parameters(dialogHistory=None))
 
     def __post_init__(self):
         if self.dialogHistory is not None:

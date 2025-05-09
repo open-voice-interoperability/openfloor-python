@@ -3,22 +3,8 @@
     "version": "1.0.0"
   },
   "conversation": {
-    "id": "conv:b95058d3-00ad-4142-b74b-91eba396d4fc",
+    "id": "conv:ffe67361-b072-40e7-ab70-9c83ab90509f",
     "conversants": [
-      {
-        "identification": {
-          "speakerUri": "tag:dev.buerokratt.ee,2025:0001",
-          "serviceUrl": "https://dev.buerokratt.ee/ovonr/conversation",
-          "organization": "Government of Estonia",
-          "conversationalName": "Buerokratt",
-          "department": "Passport Office",
-          "role": "Immigration Specialist",
-          "synopsis": "Immigration specialist as part of the Beurocrat system."
-        },
-        "persistentState": {
-          "arbitrary": "state"
-        }
-      },
       {
         "identification": {
           "speakerUri": "tag:userproxy.com,2025:abc123",
@@ -26,27 +12,59 @@
           "conversationalName": "John Doe",
           "role": "User"
         }
+      },
+      {
+        "identification": {
+          "speakerUri": "tag:dev.travelbot,2025:0001",
+          "serviceUrl": "https://dev.travelbot.ee/openfloor/conversation",
+          "organization": "Travelbot Inc.",
+          "conversationalName": "travelbot",
+          "department": "Reservations and Customer Service",
+          "role": "Reservation Specialist",
+          "synopsis": "Reservation specialist as part of the Travelbot system."
+        }
       }
     ]
   },
   "sender": {
-    "speakerUri": "tag:userproxy.com,2025:abc123",
-    "serviceUrl": "https://userproxy.com"
+    "speakerUri": "tag:userproxy.com,2025:abc123"
   },
   "events": [
     {
-      "eventType": "context",
+      "eventType": "utterance",
       "to": {
-        "speakerUri": "tag:userproxy.com,2025:abc123",
-        "serviceUrl": "https://userproxy.com"
+        "speakerUri": "tag:dev.travelbot,2025:0001",
+        "private": true
       },
+      "parameters": {
+        "dialogEvent": {
+          "id": "de:0d5bc7da-2d72-48a0-9d50-73ebdb433278",
+          "speakerUri": "tag:userproxy.com,2025:abc123",
+          "span": {
+            "startTime": "2025-05-09T17:33:47.884788"
+          },
+          "features": {
+            "text": {
+              "mimeType": "text/plain",
+              "tokens": [
+                {
+                  "value": "Give me the times to Vancouver!"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "eventType": "context",
       "parameters": {
         "dialogHistory": [
           {
             "id": "event-1",
             "speakerUri": "tag:userproxy.com,2025:abc123",
             "span": {
-              "startTime": "2025-05-09T13:44:49.099098"
+              "startTime": "2025-05-09T17:33:47.897906"
             },
             "features": {
               "text": {
@@ -61,9 +79,9 @@
           },
           {
             "id": "event-2",
-            "speakerUri": "tag:agent.com,2025:xyz123",
+            "speakerUri": "tag:dev.travelbot,2025:0001",
             "span": {
-              "startTime": "2025-05-09T13:44:49.099148"
+              "startTime": "2025-05-09T17:33:47.897964"
             },
             "features": {
               "text": {
@@ -80,7 +98,7 @@
             "id": "event-3",
             "speakerUri": "tag:userproxy.com,2025:abc123",
             "span": {
-              "startTime": "2025-05-09T13:44:49.099184"
+              "startTime": "2025-05-09T17:33:47.898001"
             },
             "features": {
               "text": {
@@ -95,9 +113,9 @@
           },
           {
             "id": "event-4",
-            "speakerUri": "tag:agent.com,2025:xyz123",
+            "speakerUri": "tag:dev.travelbot,2025:0001",
             "span": {
-              "startTime": "2025-05-09T13:44:49.099217"
+              "startTime": "2025-05-09T17:33:47.898033"
             },
             "features": {
               "text": {
@@ -111,33 +129,7 @@
             }
           }
         ],
-        "other": {}
-      }
-    },
-    {
-      "eventType": "utterance",
-      "to": {
-        "speakerUri": "tag:userproxy.com,2025:abc123",
-        "serviceUrl": "https://userproxy.com"
-      },
-      "parameters": {
-        "dialogEvent": {
-          "id": "de:d1ca8e3a-839b-4d7c-aa5b-f7fdccc9f93b",
-          "speakerUri": "tag:userproxy.com,2025:abc123",
-          "span": {
-            "startTime": "2025-05-09T13:44:49.110439"
-          },
-          "features": {
-            "text": {
-              "mimeType": "text/plain",
-              "tokens": [
-                {
-                  "value": "i want to go to vancouver"
-                }
-              ]
-            }
-          }
-        }
+        "arbitrary_key": "arbitrary_value"
       }
     }
   ]
