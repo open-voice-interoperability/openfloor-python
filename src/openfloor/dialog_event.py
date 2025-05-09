@@ -1,66 +1,114 @@
-from dataclasses import dataclass, field, asdict
-from datetime import datetime
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union, Any, Iterator, Tuple, ClassVar, Type
 from enum import Enum
 from abc import ABC
 import json
+from jsonpath_ng import jsonpath, parse
+from .json_serializable import JsonSerializableList, JsonSerializableDict
 
-class JsonSerializable(ABC):
-    """Base class for JSON serializable objects"""
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
-        """Convert instance to JSON-compatible dictionary"""
-        raise NotImplementedError
+def get_isosplit(s: str, split: str) -> Tuple[int, str]:
+    """Split string at delimiter and return number and remainder
+    Returns 0 and the string if the delimiter is not found or the text preceding the delimiter is not a number"""
+    if split in s:
+        n, s = s.split(split)
+        try:
+            n = int(n)
+        except:
+            n=0
+    else:
+        n = 0
+    return int(n), s
 
-    def to_json(self, **kwargs) -> str:
-        """Convert instance to JSON string"""
-        return json.dumps(dict(self), **kwargs)
+def parse_isoduration(s: str) -> timedelta:
+    """Parse ISO 8601 duration format to timedelta
+    
+    Args:
+        s: ISO 8601 duration string (e.g., "PT3H30M15S")
+        
+    Returns:
+        datetime.timedelta object
+    """
+    # Remove prefix
+    s = s.split('P')[-1]
+    
+    # Step through letter dividers
+    days, s = get_isosplit(s, 'D')
+    _, s = get_isosplit(s, 'T')
+    hours, s = get_isosplit(s, 'H')
+    minutes, s = get_isosplit(s, 'M')
+    seconds, s = get_isosplit(s, 'S')
 
-    @classmethod
-    def from_json(cls, json_str: str, **kwargs) -> 'JsonSerializable':
-        """Create an instance from a JSON string"""
-        data = json.loads(json_str, **kwargs)
-        return cls.from_dict(data)
+    return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
 
-class TokenSchema(str, Enum):
-    """Example token schema enum - this would be expanded based on specific needs"""
-    BERT_BASE_UNCASED = "BertTokenizer.from_pretrained(bert-base-uncased)"
+def timedelta_to_iso_duration(td: timedelta) -> str:
+    """Convert timedelta to ISO 8601 duration format
+    
+    Args:
+        td: datetime.timedelta object
+        
+    Returns:
+        ISO 8601 duration string (e.g., "PT3H30M15S")
+    """
+    total_seconds = int(td.total_seconds())
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    
+    parts = []
+    if hours > 0:
+        parts.append(f"{hours}H")
+    if minutes > 0:
+        parts.append(f"{minutes}M")
+    if seconds > 0 or not parts:
+        parts.append(f"{seconds}S")
+    
+    return f"PT{''.join(parts)}"
 
 @dataclass
-class Span(JsonSerializable):
+class Span(JsonSerializableDict):
     """Represents a time span for a dialog event or token"""
-    startTime: Optional[str] = field(default_factory=lambda: datetime.now().isoformat())
-    startOffset: Optional[str] = None  # ISO 8601 duration format
+    startTime: Optional[datetime] = None
+    startOffset: Optional[timedelta] = None  # Duration as timedelta
     endTime: Optional[datetime] = None
-    endOffset: Optional[str] = None  # ISO 8601 duration format
+    endOffset: Optional[timedelta] = None  # Duration as timedelta
 
     def __post_init__(self):
+        if self.endTime is None and self.startOffset is None: # Default to now if there is no startOffset
+            self.startTime = datetime.now()
         if self.startTime is not None and self.startOffset is not None:
-            raise ValueError("Cannot specify both startTime and startOffset")
+            raise ValueError(f"Cannot specify both startTime and startOffset: {self.startTime} and {self.startOffset}")
         if self.endTime is not None and self.endOffset is not None:
-            raise ValueError("Cannot specify both endTime and endOffset")
+            raise ValueError(f"Cannot specify both endTime and endOffset: {self.endTime} and {self.endOffset}")
         if self.startTime is None and self.startOffset is None:
-            raise ValueError("Must specify either startTime or startOffset")
+            raise ValueError(f"Must specify either startTime or startOffset: {self.startTime} and {self.startOffset}")
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Span instance to JSON-compatible dictionary"""
         if self.startTime is not None:
-            yield 'startTime', self.startTime
+            yield 'startTime', self.startTime.isoformat()
         if self.startOffset is not None:
-            yield 'startOffset', self.startOffset
+            yield 'startOffset', timedelta_to_iso_duration(self.startOffset)
         if self.endTime is not None:
             yield 'endTime', self.endTime.isoformat()
         if self.endOffset is not None:
-            yield 'endOffset', self.endOffset
+            yield 'endOffset', timedelta_to_iso_duration(self.endOffset)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Span':
         """Create a Span instance from a dictionary"""
         if 'endTime' in data and isinstance(data['endTime'], str):
             data['endTime'] = datetime.fromisoformat(data['endTime'])
+        if 'startTime' in data and isinstance(data['startTime'], str):
+            data['startTime'] = datetime.fromisoformat(data['startTime'])
+        if 'startOffset' in data and isinstance(data['startOffset'], str):
+            data['startOffset'] = parse_isoduration(data['startOffset'])
+        if 'endOffset' in data and isinstance(data['endOffset'], str):
+            data['endOffset'] = parse_isoduration(data['endOffset'])
         return cls(**data)
 
 @dataclass
-class Token(JsonSerializable):
+class Token(JsonSerializableDict):
     """Represents a single token in a feature"""
     value: Optional[Any] = None
     valueUrl: Optional[str] = None
@@ -95,20 +143,30 @@ class Token(JsonSerializable):
         if 'span' in data:
             data['span'] = Span.from_dict(data['span'])
         return cls(**data)
+    
+    def linked_values(self,dialog_event) -> List[Tuple[str, Any]]:
+        values=[]
+        for l in self.links:
+            jsonpath_expr = parse(l)
+            features_dict=dict(dialog_event.features)
+            for match in jsonpath_expr.find(features_dict):
+                if match:
+                    values.append([match.full_path,match.value])
+        return values
 
 @dataclass
-class Feature(JsonSerializable):
+class Feature(JsonSerializableDict):
     """Represents a feature in a dialog event"""
-    mimeType: str = "text/plain"
+    mimeType: str
     tokens: List[Token] = field(default_factory=list)
     alternates: List[List[Token]] = field(default_factory=list)
     lang: Optional[str] = None  # BCP 47 language tag
     encoding: Optional[str] = None  # "ISO-8859-1" or "UTF-8"
-    tokenSchema: Optional[str] = None
+    tokenSchema: Optional[str] = None  # e.g., "BertTokenizer.from_pretrained(bert-base-uncased)"
 
     def __post_init__(self):
-        if self.encoding is not None and self.encoding not in ["ISO-8859-1", "UTF-8"]:
-            raise ValueError("Encoding must be either 'ISO-8859-1' or 'UTF-8'")
+        if self.encoding is not None and self.encoding not in ["ISO-8859-1", "UTF-8", "iso-8859-1", "utf-8"]:
+            raise ValueError("Encoding must be either 'ISO-8859-1', 'iso-8859-1', 'UTF-8', or 'utf-8'")
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Feature instance to JSON-compatible dictionary"""
@@ -131,13 +189,28 @@ class Feature(JsonSerializable):
         if 'alternates' in data:
             data['alternates'] = [[Token.from_dict(token) for token in alt] for alt in data['alternates']]
         return cls(**data)
+    
+@dataclass
+class TextFeature(Feature):
+    """Represents a text feature in a dialog event with mime type set to text/plain by default"""
+    mimeType: str = "text/plain"
+    values: Optional[List[str]] = field(default=None, repr=False)
+
+    def __post_init__(self):
+        """Initialize tokens from values if provided"""
+        if self.values is not None:
+            self.tokens = [Token(value=value) for value in self.values]
+
+    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+        """Exclude the values field from the iteration"""
+        yield from super().__iter__()
 
 @dataclass
-class DialogEvent(JsonSerializable):
+class DialogEvent(JsonSerializableDict):
     """Represents a dialog event according to the specification"""
     id: str
     speakerUri: str
-    span: Span
+    span: Optional[Span] = field(default_factory=Span)
     features: Dict[str, Feature] = field(default_factory=dict)
     previousId: Optional[str] = None
     context: Optional[str] = None
@@ -164,4 +237,44 @@ class DialogEvent(JsonSerializable):
             data['span'] = Span.from_dict(data['span'])
         if 'features' in data:
             data['features'] = {name: Feature.from_dict(feature) for name, feature in data['features'].items()}
-        return cls(**data) 
+        return cls(**data)
+
+@dataclass
+class DialogHistory(JsonSerializableList):
+    """Represents a history of dialog events"""
+    _events: List[DialogEvent] = field(default_factory=list)
+
+    def __iter__(self) -> Iterator[Any]:
+        """Convert DialogHistory instance to JSON-compatible list"""
+        for event in self._events:
+            yield dict(event)
+
+    def append(self, event: DialogEvent) -> None:
+        """Add a dialog event to the history"""
+        self._events.append(event)
+
+    def extend(self, events: List[DialogEvent]) -> None:
+        """Add multiple dialog events to the history"""
+        self._events.extend(events)
+
+    def clear(self) -> None:
+        """Clear all events from the history"""
+        self._events.clear()
+
+    def __len__(self) -> int:
+        """Get the number of events in the history"""
+        return len(self._events)
+
+    def __getitem__(self, index: int) -> DialogEvent:
+        """Get an event by index"""
+        return self._events[index]
+
+    def __contains__(self, event: DialogEvent) -> bool:
+        """Check if an event is in the history"""
+        return event in self._events
+
+    @classmethod
+    def from_dict(cls, data: List[Dict[str, Any]]) -> 'DialogHistory':
+        """Create a DialogHistory instance from a list of dictionaries"""
+        events = [DialogEvent.from_dict(event) for event in data]
+        return cls(_events=events) 

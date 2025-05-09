@@ -1,0 +1,120 @@
+{
+  "schema": {
+    "version": "1.0.0"
+  },
+  "conversation": {
+    "id": "1234567890"
+  },
+  "sender": {
+    "speakerUri": "tag:userproxy.com,2025:abc123",
+    "serviceUrl": "https://userproxy.com"
+  },
+  "events": [
+    {
+      "eventType": "context",
+      "to": {
+        "speakerUri": "tag:userproxy.com,2025:abc123",
+        "serviceUrl": "https://userproxy.com"
+      },
+      "parameters": {
+        "dialogHistory": [
+          {
+            "id": "event-1",
+            "speakerUri": "tag:userproxy.com,2025:abc123",
+            "span": {
+              "startTime": "2025-05-09T12:20:06.690069"
+            },
+            "features": {
+              "text": {
+                "mimeType": "text/plain",
+                "tokens": [
+                  {
+                    "value": "hello"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "event-2",
+            "speakerUri": "tag:agent.com,2025:xyz123",
+            "span": {
+              "startTime": "2025-05-09T12:20:06.690125"
+            },
+            "features": {
+              "text": {
+                "mimeType": "text/plain",
+                "tokens": [
+                  {
+                    "value": "hello, how can i help you?"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "event-3",
+            "speakerUri": "tag:userproxy.com,2025:abc123",
+            "span": {
+              "startTime": "2025-05-09T12:20:06.690162"
+            },
+            "features": {
+              "text": {
+                "mimeType": "text/plain",
+                "tokens": [
+                  {
+                    "value": "i need to book a flight"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "event-4",
+            "speakerUri": "tag:agent.com,2025:xyz123",
+            "span": {
+              "startTime": "2025-05-09T12:20:06.690235"
+            },
+            "features": {
+              "text": {
+                "mimeType": "text/plain",
+                "tokens": [
+                  {
+                    "value": "i can help you with that"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "other": {}
+      }
+    },
+    {
+      "eventType": "utterance",
+      "to": {
+        "speakerUri": "tag:userproxy.com,2025:abc123",
+        "serviceUrl": "https://userproxy.com"
+      },
+      "parameters": {
+        "dialogEvent": {
+          "id": "event-1",
+          "speakerUri": "tag:userproxy.com,2025:abc123",
+          "span": {
+            "startTime": "2025-05-09T12:20:06.672170"
+          },
+          "features": {
+            "text": {
+              "mimeType": "text/plain",
+              "tokens": [
+                {
+                  "value": "i want to go to vancouver"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}
