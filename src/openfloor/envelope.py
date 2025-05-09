@@ -4,7 +4,8 @@ from datetime import datetime
 from .json_serializable import JsonSerializableDict, JsonSerializableList
 from .manifest import Identification
 from .dialog_event import DialogHistory
-   
+import uuid
+
 @dataclass
 class Schema(JsonSerializableDict):
     """Represents the schema section of an Open Floor message envelope"""
@@ -52,8 +53,12 @@ class Conversant(JsonSerializableDict):
 @dataclass
 class Conversation(JsonSerializableDict):
     """Represents the conversation section of an Open Floor message envelope"""
-    id: str
+    id: Optional[str] = None
     conversants: List[Conversant] = field(default_factory=list)
+
+    def __post_init__(self):
+        if self.id is None:
+            self.id = f"conv:{uuid.uuid4()}"
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Conversation instance to JSON-compatible dictionary"""

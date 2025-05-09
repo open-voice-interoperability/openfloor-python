@@ -6,6 +6,7 @@ from abc import ABC
 import json
 from jsonpath_ng import jsonpath, parse
 from .json_serializable import JsonSerializableList, JsonSerializableDict
+import uuid
 
 def get_isosplit(s: str, split: str) -> Tuple[int, str]:
     """Split string at delimiter and return number and remainder
@@ -208,14 +209,16 @@ class TextFeature(Feature):
 @dataclass
 class DialogEvent(JsonSerializableDict):
     """Represents a dialog event according to the specification"""
-    id: str
     speakerUri: str
+    id: Optional[str] = None
     span: Optional[Span] = field(default_factory=Span)
     features: Dict[str, Feature] = field(default_factory=dict)
     previousId: Optional[str] = None
     context: Optional[str] = None
 
     def __post_init__(self):
+        if self.id is None:
+            self.id = f"de:{uuid.uuid4()}"
         if not self.features:
             raise ValueError("Dialog event must contain at least one feature")
 

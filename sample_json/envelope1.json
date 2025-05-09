@@ -3,7 +3,31 @@
     "version": "1.0.0"
   },
   "conversation": {
-    "id": "1234567890"
+    "id": "conv:b95058d3-00ad-4142-b74b-91eba396d4fc",
+    "conversants": [
+      {
+        "identification": {
+          "speakerUri": "tag:dev.buerokratt.ee,2025:0001",
+          "serviceUrl": "https://dev.buerokratt.ee/ovonr/conversation",
+          "organization": "Government of Estonia",
+          "conversationalName": "Buerokratt",
+          "department": "Passport Office",
+          "role": "Immigration Specialist",
+          "synopsis": "Immigration specialist as part of the Beurocrat system."
+        },
+        "persistentState": {
+          "arbitrary": "state"
+        }
+      },
+      {
+        "identification": {
+          "speakerUri": "tag:userproxy.com,2025:abc123",
+          "serviceUrl": "https://userproxy.com",
+          "conversationalName": "John Doe",
+          "role": "User"
+        }
+      }
+    ]
   },
   "sender": {
     "speakerUri": "tag:userproxy.com,2025:abc123",
@@ -22,7 +46,7 @@
             "id": "event-1",
             "speakerUri": "tag:userproxy.com,2025:abc123",
             "span": {
-              "startTime": "2025-05-09T12:20:06.690069"
+              "startTime": "2025-05-09T13:44:49.099098"
             },
             "features": {
               "text": {
@@ -39,7 +63,7 @@
             "id": "event-2",
             "speakerUri": "tag:agent.com,2025:xyz123",
             "span": {
-              "startTime": "2025-05-09T12:20:06.690125"
+              "startTime": "2025-05-09T13:44:49.099148"
             },
             "features": {
               "text": {
@@ -56,7 +80,7 @@
             "id": "event-3",
             "speakerUri": "tag:userproxy.com,2025:abc123",
             "span": {
-              "startTime": "2025-05-09T12:20:06.690162"
+              "startTime": "2025-05-09T13:44:49.099184"
             },
             "features": {
               "text": {
@@ -73,7 +97,7 @@
             "id": "event-4",
             "speakerUri": "tag:agent.com,2025:xyz123",
             "span": {
-              "startTime": "2025-05-09T12:20:06.690235"
+              "startTime": "2025-05-09T13:44:49.099217"
             },
             "features": {
               "text": {
@@ -98,10 +122,10 @@
       },
       "parameters": {
         "dialogEvent": {
-          "id": "event-1",
+          "id": "de:d1ca8e3a-839b-4d7c-aa5b-f7fdccc9f93b",
           "speakerUri": "tag:userproxy.com,2025:abc123",
           "span": {
-            "startTime": "2025-05-09T12:20:06.672170"
+            "startTime": "2025-05-09T13:44:49.110439"
           },
           "features": {
             "text": {
