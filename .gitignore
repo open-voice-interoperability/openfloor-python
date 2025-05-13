@@ -1,1 +1,10 @@
 src/openfloor/__pycache__/*
+src/openfloor.egg-info/dependency_links.txt
+src/openfloor.egg-info/PKG-INFO
+src/openfloor.egg-info/requires.txt
+src/openfloor.egg-info/SOURCES.txt
+src/openfloor.egg-info/top_level.txt
+UNKNOWN.egg-info/dependency_links.txt
+UNKNOWN.egg-info/PKG-INFO
+UNKNOWN.egg-info/SOURCES.txt
+UNKNOWN.egg-info/top_level.txt
