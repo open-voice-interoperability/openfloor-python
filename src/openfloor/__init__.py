@@ -3,7 +3,7 @@ from .envelope import *
 from .manifest import *
 from .events import *
 from .json_serializable import *
-
+from .agent import *
 __all__ = [
     "DialogEvent", 
     "DialogHistory",
@@ -31,4 +31,7 @@ __all__ = [
     "UninviteEvent",
     "DeclineInviteEvent",
     "ByeEvent",
+    "OpenFloorEvents",
+    "OpenFloorAgent",
+    "BotAgent",
     ]

@@ -1,1 +1,31 @@
-{"openFloor": {"schema": {"version": "1.0.0"}, "conversation": {"id": "conv:5b93faeb-1b53-45f0-b1df-27cf644b11ed", "conversants": [{"identification": {"speakerUri": "tag:userproxy.com,2025:abc123", "serviceUrl": "https://userproxy.com", "conversationalName": "John Doe", "role": "User"}}, {"identification": {"speakerUri": "tag:dev.travelbot,2025:0001", "serviceUrl": "https://dev.travelbot.ee/openfloor/conversation", "organization": "Travelbot Inc.", "conversationalName": "travelbot", "department": "Reservations and Customer Service", "role": "Reservation Specialist", "synopsis": "Reservation specialist as part of the Travelbot system."}, "persistentState": {"conversationEnded": null, "conversationActive": true, "conversationPaused": false, "conversationResumed": null}}]}, "sender": {"speakerUri": "tag:userproxy.com,2025:abc123"}, "events": [{"eventType": "utterance", "to": {"speakerUri": "tag:dev.travelbot,2025:0001", "private": true}, "parameters": {"dialogEvent": {"id": "de:0fd2ec97-538e-4f49-89ba-f1533a89bf71", "speakerUri": "tag:userproxy.com,2025:abc123", "span": {"startTime": "2025-05-10T00:10:46.389895"}, "features": {"text": {"mimeType": "text/plain", "tokens": [{"value": "Give me the times to Vancouver!"}]}}}}}]}}
+{
+    "openFloor": {
+        "schema": {
+            "version": "1.0.0"
+        },
+        "conversation": {
+            "id": "conv:558a5160-5937-4ca0-9b5e-4ee8f3e93a64",
+            "conversants": [
+                {
+                    "identification": {
+                        "speakerUri": "tag:userproxy.com,2025:abc123",
+                        "serviceUrl": "https://userproxy.com",
+                        "conversationalName": "John Doe",
+                        "role": "User"
+                    }
+                }
+            ]
+        },
+        "sender": {
+            "speakerUri": "tag:userproxy.com,2025:abc123"
+        },
+        "events": [
+            {
+                "eventType": "invite",
+                "to": {
+                    "speakerUri": "tag:dev.travelbot,2025:0001"
+                }
+            }
+        ]
+    }
+}

@@ -34,6 +34,10 @@ class JsonSerializable(ABC):
         """Convert instance to JSON string"""
         return json.dumps(self, default=self._json_default, **kwargs)
 
+    def __repr__(self) -> str:
+        """Return JSON string representation of the object"""
+        return self.to_json()
+
     def to_file(self, filepath: str, **kwargs) -> None:
         """Save instance to a JSON file"""
         with open(filepath, 'w', encoding='utf-8') as f:

@@ -150,8 +150,8 @@ class Event(JsonSerializableDataclass):
 @dataclass
 class Envelope(JsonSerializableDataclass):
     """Represents the root Open Floor message envelope"""
-    conversation: Conversation
-    sender: Sender
+    conversation: Conversation = field(default_factory=Conversation)
+    sender: Sender = field(default_factory=Sender)
     schema: Schema = field(default_factory=Schema)
     events: List[Event] = field(default_factory=list)
 

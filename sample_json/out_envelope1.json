@@ -1,0 +1,59 @@
+{
+  "openFloor": {
+    "schema": {
+      "version": "1.0.0"
+    },
+    "conversation": {
+      "id": "conv:558a5160-5937-4ca0-9b5e-4ee8f3e93a64",
+      "conversants": [
+        {
+          "identification": {
+            "speakerUri": "tag:userproxy.com,2025:abc123",
+            "serviceUrl": "https://userproxy.com",
+            "conversationalName": "John Doe",
+            "role": "User"
+          }
+        },
+        {
+          "identification": {
+            "speakerUri": "tag:dev.travelbot,2025:0001",
+            "serviceUrl": "https://dev.travelbot.ee/openfloor/conversation",
+            "organization": "Travelbot Inc.",
+            "conversationalName": "travelbot",
+            "department": "Reservations and Customer Service",
+            "role": "Reservation Specialist",
+            "synopsis": "Reservation specialist as part of the Travelbot system."
+          }
+        }
+      ]
+    },
+    "sender": {
+      "speakerUri": "tag:dev.travelbot,2025:0001",
+      "serviceUrl": "https://dev.travelbot.ee/openfloor/conversation"
+    },
+    "events": [
+      {
+        "eventType": "utterance",
+        "parameters": {
+          "dialogEvent": {
+            "id": "de:36cb6a90-96ba-4aad-a7eb-d0ab9f0c7976",
+            "speakerUri": "tag:dev.travelbot,2025:0001",
+            "span": {
+              "startTime": "2025-05-12T15:28:37.352479"
+            },
+            "features": {
+              "text": {
+                "mimeType": "text/plain",
+                "tokens": [
+                  {
+                    "value": "Sorry! I'm a simple bot that has not been programmed to do anything yet."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

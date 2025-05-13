@@ -1,0 +1,25 @@
+{
+  "openFloor": {
+    "schema": {
+      "version": "1.0.0"
+    },
+    "conversation": {
+      "id": "conv:558a5160-5937-4ca0-9b5e-4ee8f3e93a64",
+      "conversants": [
+        {
+          "identification": {
+            "speakerUri": "tag:userproxy.com,2025:abc123",
+            "serviceUrl": "https://userproxy.com",
+            "conversationalName": "John Doe",
+            "role": "User"
+          }
+        }
+      ]
+    },
+    "sender": {
+      "speakerUri": "tag:dev.travelbot,2025:0001",
+      "serviceUrl": "https://dev.travelbot.ee/openfloor/conversation"
+    },
+    "events": []
+  }
+}
