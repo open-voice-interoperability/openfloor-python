@@ -4,6 +4,10 @@ from .manifest import *
 from .events import *
 from .json_serializable import *
 from .agent import *
+
+__version__ = "0.1.0"
+__author__ = "David Attwater"
+
 __all__ = [
     "DialogEvent", 
     "DialogHistory",

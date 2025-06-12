@@ -227,8 +227,6 @@ class DialogEvent(JsonSerializableDataclass):
         super().__init__()
         if self.id is None:
             self.id = f"de:{uuid.uuid4()}"
-        if not self.features:
-            raise ValueError("Dialog event must contain at least one feature")
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert DialogEvent instance to JSON-compatible dictionary"""
