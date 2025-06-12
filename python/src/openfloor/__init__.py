@@ -5,7 +5,7 @@ from .events import *
 from .json_serializable import *
 from .agent import *
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "David Attwater"
 
 __all__ = [
