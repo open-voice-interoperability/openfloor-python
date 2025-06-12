@@ -49,12 +49,9 @@ dev = [
     "pip-tools"
 ]
 
-
-[tool.setuptools.packages.find]  
-where = ["./python/src"]  
-
-[tool.hatch.build.targets.wheel]
-packages = ["python/src/openfloor"]
+[tool.setuptools]
+package-dir = {"" = "python/src"}
+packages = ["openfloor"]
 
 [tool.black]
 line-length = 88
