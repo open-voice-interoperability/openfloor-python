@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openfloor"
-version = "0.1.2"
+version = "0.1.1"
 description = "A Python implementation of the Open Floor specification for interoperable conversational environments"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -100,7 +100,7 @@ python_files = ["test_*.py"]
 addopts = "-v --cov=python/src --cov-report=term-missing" 
 
 [tool.bumpver]
-current_version = "0.1.2"
+current_version = "0.1.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "Bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"

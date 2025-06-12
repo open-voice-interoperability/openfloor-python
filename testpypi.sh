@@ -7,6 +7,7 @@ DRY_RUN=0
 build_package() {
     echo "Building package..."
     python3 -m pip install --upgrade build
+    rm -rf dist/ build/ *.egg-info/
     python3 -m build
 }
 
