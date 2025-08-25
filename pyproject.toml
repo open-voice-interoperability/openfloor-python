@@ -4,18 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openfloor"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python implementation of the Open Floor specification for interoperable conversational environments"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "Apache-2.0"
+license-files = [ "LICENSE.txt" ]
 authors = [
     { name = "David Attwater", email = "davidattwater@gmail.com" }
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -28,13 +28,15 @@ classifiers = [
 ]
 dependencies = [
     "jsonpath-ng>=1.5.0",
+    "events>=0.5"
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/openfloor"
-Documentation = "https://github.com/yourusername/openfloor#readme"
-Repository = "https://github.com/yourusername/openfloor.git"
-Issues = "https://github.com/yourusername/openfloor/issues"
+Homepage = "https://github.com/open-voice-interoperability"
+Documentation = "https://github.com/open-voice-interoperability/openfloor-python/blob/main/README.md"
+Repository = "https://github.com/open-voice-interoperability/openfloor-python"
+Issues = "https://github.com/open-voice-interoperability/openfloor-python/issues"
+Specifications = "https://github.com/open-voice-interoperability/openfloor-docs"
 
 [project.optional-dependencies]
 dev = [
@@ -44,10 +46,12 @@ dev = [
     "isort>=5.0.0",
     "mypy>=1.0.0",
     "ruff>=0.1.0",
+    "pip-tools"
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/openfloor"]
+[tool.setuptools]
+package-dir = {"" = "python/src"}
+packages = ["openfloor"]
 
 [tool.black]
 line-length = 88
@@ -93,4 +97,22 @@ ignore = []
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=src/openfloor --cov-report=term-missing" 
+addopts = "-v --cov=python/src --cov-report=term-missing" 
+
+[tool.bumpver]
+current_version = "0.1.1"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "Bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [ '^current_version = "{version}"', '^version = "{version}"' ]
+"python/src/version.py" = ["{version}"]
+"python/src/openfloor/__init__.py" = ["{version}"]
+
