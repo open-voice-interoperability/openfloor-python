@@ -26,14 +26,14 @@ jobs:
 
     - name: Build Sphinx documentation
       run: |
-        # Navigates into the documentation source directory
-        cd python/src/sphinx_docs 
-        python -m sphinx -b html . _build 
-
+        # Use the full relative path from the repository root to avoid 'cd' issues
+        python -m sphinx -b html ./python/src/sphinx_docs ./python/src/sphinx_docs/_build 
+        
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./python/src/sphinx_docs/_build/html # Path to your built HTML
+        # THIS IS THE CRITICAL LINE
+        publish_dir: ./python/src/sphinx_docs/_build/html 
         publish_branch: gh-pages
         enable_jekyll: false
