@@ -25,7 +25,8 @@ It can be used to aid the construction of any componens with produces or consume
 ```bash
 pip install openfloor
 ```
-
+## Detailed Documentation ##
+Detailed documentation for the Python code is at https://open-voice-interoperability.github.io/openfloor-python/.
 ## Quick Tutorial
 
 The `openfloor` library allows you to construct, interrogate and alter payloads that meet the Open-floor messaging standard.   It saves you from having to worry too much about the underlying JSON and provides a level of type-safety and checking.   If you use the library properly you should always be constructing payloads that meet the standard.
