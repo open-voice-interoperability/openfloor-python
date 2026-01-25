@@ -80,9 +80,8 @@ class BotAgent(OpenFloorAgent):
     Event handlers can be customized by subclassing and overriding the default handlers.
 
     For a minimal implementation, all that is required is the following
-    - Implement a handler for invite events to send a greeting
-    - Implement a handler for bye events to send a farewell
-    - Implement a handler for utterance events to handle conversation
+    - Implement a handler for invite events to send a greeting (The base class has a default implementation)
+    - Implement a handler for utterance events to handle conversation (The base class has a default implementation)
     """
 
     _active_conversation : Optional[Conversation] = None
@@ -175,10 +174,20 @@ class BotAgent(OpenFloorAgent):
 
     def bot_on_invite(self, event: InviteEvent, in_envelope: Envelope, out_envelope: Envelope) -> None:
         print("Entering bot_on_invite")
-       
+
         #Accept the invitation
         self._active_conversation = Conversation(id=in_envelope.conversation.id)
-        
+
+        #Send acceptInvite event (required by spec 1.1.0 section 2.1)
+        out_envelope.events.append(AcceptInviteEvent())
+
+        #Send a greeting utterance (required by spec 1.1.0 section 2.1)
+        greeting = DialogEvent(
+            speakerUri=self._manifest.identification.speakerUri,
+            features={"text": TextFeature(values=["Hello! How can I help you today?"])},
+        )
+        out_envelope.events.append(UtteranceEvent(dialogEvent=greeting))
+
         #automatically treat this as if the inviting agent had also granted the floor. (This is default behavior according to the spec)
         self.bot_on_grant_floor(
             GrantFloorEvent(
