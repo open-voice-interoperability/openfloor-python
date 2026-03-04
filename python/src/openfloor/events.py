@@ -22,11 +22,11 @@ class UtteranceEvent(Event):
         """Convert UtteranceEvent instance to JSON-compatible dictionary"""
         yield 'eventType', self.eventType
         if self.to is not None:
-            yield 'to', dict(self.to)
+            yield 'to', self.to.__json__()
         if self.reason is not None:
             yield 'reason', self.reason
         if self.parameters:
-            yield 'parameters', dict(self.parameters)
+            yield 'parameters', self.parameters.__json__()
 
 @dataclass
 class InviteEvent(Event):
@@ -46,11 +46,11 @@ class InviteEvent(Event):
         """Convert InviteEvent instance to JSON-compatible dictionary"""
         yield 'eventType', self.eventType
         if self.to is not None:
-            yield 'to', dict(self.to)
+            yield 'to', self.to.__json__()
         if self.reason is not None:
             yield 'reason', self.reason
         if self.parameters:
-            yield 'parameters', dict(self.parameters)
+            yield 'parameters', self.parameters.__json__()
 
 @dataclass
 class UninviteEvent(Event):

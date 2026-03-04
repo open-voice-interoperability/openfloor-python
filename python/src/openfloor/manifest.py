@@ -72,14 +72,14 @@ class Capability(JsonSerializableDataclass):
         if self.languages is not None:
             yield 'languages', self.languages
         if self.supportedLayers is not None:
-            yield 'supportedLayers', dict(self.supportedLayers)
+            yield 'supportedLayers', self.supportedLayers.__json__()
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Capability':
         """Create a Capability instance from a dictionary"""
         if 'supportedLayers' in data:
             data['supportedLayers'] = SupportedLayers.from_dict(data['supportedLayers'])
-        return cls(**data)
+        return super().from_dict(data)
 
 @dataclass
 class Manifest(JsonSerializableDataclass):
@@ -89,8 +89,8 @@ class Manifest(JsonSerializableDataclass):
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Manifest instance to JSON-compatible dictionary"""
-        yield 'identification', dict(self.identification)
-        yield 'capabilities', [dict(capability) for capability in self.capabilities]
+        yield 'identification', self.identification.__json__()
+        yield 'capabilities', [capability.__json__() for capability in self.capabilities]
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Manifest':
@@ -99,4 +99,4 @@ class Manifest(JsonSerializableDataclass):
             data['identification'] = Identification.from_dict(data['identification'])
         if 'capabilities' in data:
             data['capabilities'] = [Capability.from_dict(cap) for cap in data['capabilities']]
-        return cls(**data) 
+        return super().from_dict(data)

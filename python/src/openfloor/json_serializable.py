@@ -58,12 +58,27 @@ class JsonSerializable(ABC):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'JsonSerializableDict':
-        """Create an instance from a dictionary or instance"""
+        """Create an instance from a dictionary or instance
+
+        When a dictionary is provided any keys that do not correspond to
+        dataclass fields are silently preserved in ``_undefined_extras``
+        rather than being passed to the constructor.  This ensures that
+        unexpected data from external sources does not raise ``TypeError``
+        during construction.  The preserved extras are re-emitted by
+        ``__json__()``.
+        """
         if isinstance(data, cls):
             return data
         if isinstance(data, dict):
-            return cls(**data)
+            defined_kwargs, undefined_kwargs = split_kwargs(cls, data)
+            instance = cls(**defined_kwargs)
+            instance._undefined_extras = undefined_kwargs
+            return instance
         raise TypeError(f"Cannot create {cls.__name__} from {type(data)}")
+
+    def _get_undefined_extras(self) -> Dict[str, Any]:
+        """Return the undefined extras captured by :meth:`from_dict`, or an empty dict."""
+        return getattr(self, '_undefined_extras', {})
 
     def __json__(self):
         """Default JSON serialization method"""
@@ -140,7 +155,9 @@ class JsonSerializableDict(JsonSerializable):
 
     def __json__(self):
         """JSON serialization for dictionary-like objects"""
-        return {k: self._serialize_value(v) for k, v in self}
+        result = {k: self._serialize_value(v) for k, v in self}
+        result.update(self._get_undefined_extras())
+        return result
 
 class JsonSerializableList(JsonSerializable):
     """Base class for JSON serializable objects that serialize to lists"""
@@ -157,7 +174,7 @@ class JsonSerializableList(JsonSerializable):
         """Convert instance to JSON-compatible list"""
         for item in self._items:
             if isinstance(item, JsonSerializableDict) or isinstance(item, JsonSerializableDataclass):
-                yield dict(item)
+                yield item.__json__()
             elif isinstance(item, JsonSerializableList):
                 yield [i for i in item.__iter__()]
             else:
@@ -212,15 +229,26 @@ class JsonSerializableDataclass(JsonSerializable):
 
     def __json__(self):
         """JSON serialization for dataclass objects"""
-        return {k: self._serialize_value(v) for k, v in self}
+        result = {k: self._serialize_value(v) for k, v in self}
+        result.update(self._get_undefined_extras())
+        return result
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'JsonSerializableDataclass':
-        """Create an instance from a dictionary"""
+        """Create an instance from a dictionary.
+
+        Extra keys in ``data`` are silently preserved in
+        ``_undefined_extras`` via :func:`split_kwargs`, allowing callers to
+        pass in unfiltered JSON blobs without causing constructor failures.
+        The preserved extras are re-emitted by ``__json__()``.
+        """
         if isinstance(data, cls):
             return data
         if isinstance(data, dict):
-            return cls(**data)
+            defined_kwargs, undefined_kwargs = split_kwargs(cls, data)
+            instance = cls(**defined_kwargs)
+            instance._undefined_extras = undefined_kwargs
+            return instance
         raise TypeError(f"Cannot create {cls.__name__} from {type(data)}")
 
     def copy(self) -> 'JsonSerializableDataclass':
@@ -237,21 +265,17 @@ def split_kwargs(cls: Type, kwargs: Dict[str, Any]) -> Tuple[Dict[str, Any], Dic
         
     Returns:
         Tuple of (defined_fields, undefined_fields) where each is a dictionary
-        of the respective fields from kwargs. Defined fields that are not in kwargs
-        will be included in defined_fields with a value of None.
+        of the respective fields from kwargs.
     """
     # Get the defined fields for the class
     defined_fields: Set[str] = set()
     if hasattr(cls, '__dataclass_fields__'):
         defined_fields = set(cls.__dataclass_fields__.keys())
-    
-    # Initialize defined_kwargs with all defined fields set to None
-    defined_kwargs = {field: None for field in defined_fields}
-    
-    # Update defined_kwargs with values from kwargs
-    defined_kwargs.update({k: v for k, v in kwargs.items() if k in defined_fields})
-    
+
+    # Only include kwargs whose keys match defined fields
+    defined_kwargs = {k: v for k, v in kwargs.items() if k in defined_fields}
+
     # Get undefined fields
     undefined_kwargs = {k: v for k, v in kwargs.items() if k not in defined_fields}
-    
+
     return defined_kwargs, undefined_kwargs

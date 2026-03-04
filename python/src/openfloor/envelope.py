@@ -44,7 +44,7 @@ class Conversant(JsonSerializableDataclass):
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Conversant instance to JSON-compatible dictionary"""
-        yield 'identification', dict(self.identification)
+        yield 'identification', self.identification.__json__()
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Conversant':
@@ -53,7 +53,7 @@ class Conversant(JsonSerializableDataclass):
             data['identification'] = Identification.from_dict(data['identification'])
         # Remove persistentState if present (deprecated in 1.1.0)
         data.pop('persistentState', None)
-        return cls(**data)
+        return super().from_dict(data)
 
 @dataclass
 class Conversation(JsonSerializableDataclass):
@@ -72,7 +72,7 @@ class Conversation(JsonSerializableDataclass):
         """Convert Conversation instance to JSON-compatible dictionary"""
         yield 'id', self.id
         if self.conversants:
-            yield 'conversants', [dict(conversant) for conversant in self.conversants]
+            yield 'conversants', [conversant.__json__() for conversant in self.conversants]
         if self.assignedFloorRoles is not None:
             yield 'assignedFloorRoles', self.assignedFloorRoles
         if self.floorGranted is not None:
@@ -83,7 +83,7 @@ class Conversation(JsonSerializableDataclass):
         """Create a Conversation instance from a dictionary"""
         if 'conversants' in data:
             data['conversants'] = [Conversant.from_dict(conv) for conv in data['conversants']]
-        return cls(**data)
+        return super().from_dict(data)
 
 @dataclass
 class Sender(JsonSerializableDataclass):
@@ -135,11 +135,11 @@ class Event(JsonSerializableDataclass):
         """Convert Event instance to JSON-compatible dictionary"""
         yield 'eventType', self.eventType
         if self.to is not None:
-            yield 'to', dict(self.to)
+            yield 'to', self.to.__json__()
         if self.reason is not None:
             yield 'reason', self.reason
         if self.parameters:
-            yield 'parameters', dict(self.parameters)
+            yield 'parameters', self.parameters.__json__()
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Event':
@@ -148,7 +148,7 @@ class Event(JsonSerializableDataclass):
             data['to'] = To.from_dict(data['to'])
         if 'parameters' in data and isinstance(data['parameters'], dict):
             data['parameters'] = Parameters(data['parameters'])
-        return cls(**data)
+        return super().from_dict(data)
     
 @dataclass
 class Envelope(JsonSerializableDataclass):
@@ -160,10 +160,10 @@ class Envelope(JsonSerializableDataclass):
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert OpenFloor instance to JSON-compatible dictionary"""
-        yield 'schema', dict(self.schema)
-        yield 'conversation', dict(self.conversation)
-        yield 'sender', dict(self.sender)
-        yield 'events', [dict(event) for event in self.events]
+        yield 'schema', self.schema.__json__()
+        yield 'conversation', self.conversation.__json__()
+        yield 'sender', self.sender.__json__()
+        yield 'events', [event.__json__() for event in self.events]
 
     def to_json(self, as_payload: bool = False, **kwargs) -> str:
         """Convert to JSON string, optionally wrapped in a payload"""
@@ -206,7 +206,7 @@ class Envelope(JsonSerializableDataclass):
             data['sender'] = Sender.from_dict(data['sender'])
         if 'events' in data:
             data['events'] = [Event.from_dict(event) for event in data['events']]
-        return cls(**data)
+        return super().from_dict(data)
 
 @dataclass
 class Payload(JsonSerializableDataclass):
@@ -215,14 +215,14 @@ class Payload(JsonSerializableDataclass):
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Payload instance to JSON-compatible dictionary"""
-        yield 'openFloor', dict(self.openFloor)
+        yield 'openFloor', self.openFloor.__json__()
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Payload':
         """Create a Payload instance from a dictionary"""
         if 'openFloor' in data:
             data['openFloor'] = Envelope.from_dict(data['openFloor'])
-        return cls(**data)
+        return super().from_dict(data)
     
     
 

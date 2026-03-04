@@ -120,7 +120,7 @@ All objects in openfloor can be printed in JSON format. For example:
 
 ```
 print(chat_agent_details.to_json(indent=2))
-print(user_id_details.to_json(indent=2))
+print(user_details.to_json(indent=2))
 ```
 
 All objects in openfloor can also be created from JSON strings or from file.  For example:
@@ -318,7 +318,7 @@ envelope.events.append(
     dialogEvent=utterance,
     to=To(
       speakerUri=chat_agent_details.identification.speakerUri,
-      private=Ture
+      private=True
     )
   )
 )
