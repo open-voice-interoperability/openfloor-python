@@ -213,9 +213,10 @@ class BotAgent(OpenFloorAgent):
         print("Entering bot_on_get_manifests")
         out_envelope.events.append(
             PublishManifestsEvent(
-                Parameters=Parameters(
-                    manifests={"servicingManifests" : [self._manifest], "discoveryManifests" : []}
-                )
+                parameters=Parameters({
+                    "servicingManifests": [self._manifest],
+                    "discoveryManifests": []
+                })
             )
         )
 
