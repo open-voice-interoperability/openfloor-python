@@ -10,13 +10,13 @@ import json
 @dataclass
 class Schema(JsonSerializableDataclass):
     """Represents the schema section of an Open Floor message envelope"""
-    version: str = "1.0.0"
+    version: str = "1.1.0"
     url: Optional[str] = None
 
     def __post_init__(self):
         """Initialize after dataclass initialization"""
         if self.version is None:
-            self.version="1.0.0"
+            self.version="1.1.0"
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Schema instance to JSON-compatible dictionary"""
@@ -36,7 +36,6 @@ class PersistentState(JsonSerializableDict):
 class Conversant(JsonSerializableDataclass):
     """Represents a conversant in the conversation"""
     identification: Identification
-    persistentState: PersistentState = field(default_factory=PersistentState)
 
     def __post_init__(self):
         """Initialize after dataclass initialization"""
@@ -46,16 +45,14 @@ class Conversant(JsonSerializableDataclass):
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Conversant instance to JSON-compatible dictionary"""
         yield 'identification', dict(self.identification)
-        if self.persistentState:
-            yield 'persistentState', dict(self.persistentState)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Conversant':
         """Create a Conversant instance from a dictionary"""
         if 'identification' in data:
             data['identification'] = Identification.from_dict(data['identification'])
-        if 'persistentState' in data:
-            data['persistentState'] = PersistentState(data['persistentState'])
+        # Remove persistentState if present (deprecated in 1.1.0)
+        data.pop('persistentState', None)
         return cls(**data)
 
 @dataclass
@@ -63,6 +60,8 @@ class Conversation(JsonSerializableDataclass):
     """Represents the conversation section of an Open Floor message envelope"""
     id: Optional[str] = None
     conversants: List[Conversant] = field(default_factory=list)
+    assignedFloorRoles: Optional[Dict[str, List[str]]] = None
+    floorGranted: Optional[List[str]] = None
 
     def __post_init__(self):
         """Initialize after dataclass initialization"""
@@ -74,6 +73,10 @@ class Conversation(JsonSerializableDataclass):
         yield 'id', self.id
         if self.conversants:
             yield 'conversants', [dict(conversant) for conversant in self.conversants]
+        if self.assignedFloorRoles is not None:
+            yield 'assignedFloorRoles', self.assignedFloorRoles
+        if self.floorGranted is not None:
+            yield 'floorGranted', self.floorGranted
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Conversation':

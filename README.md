@@ -158,7 +158,7 @@ Which creates the following envelope:
 {
 {
   "schema": {
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "conversation": {
     "id": "conv:5d389c98-7eea-432a-833c-1e71e2b21fb8"
@@ -177,18 +177,9 @@ Now lets use the manifests that we defined above to add a `conversant` section i
 
 We use the Identification section of the manifest to define a conversant in the conversation record.
 
-The conversant records can also optionally have a PersistentState defined which is a custom set of key value pairs that are supplied specially for stateless agents to perist their state between calls.  We add a simple example of a persistent state to the chate agent.
-
 ```python
-
-chat_agent_persistent_state=PersistentState(
-  conversationEnded=None,
-  conversationActive=True,
-  conversationPaused=False,
-  conversationResumed=None
-)
 conversation.conversants.append(Conversant(user_details.identification))
-conversation.conversants.append(Conversant(chat_agent_details.identification,persistentState=chat_agent_persistent_state))
+conversation.conversants.append(Conversant(chat_agent_details.identification))
 
 print(conversation.to_json(indent=2))
 ```
@@ -197,7 +188,7 @@ This will give us the more substantial envelope containing the conversant inform
 ```json
 {
   "schema": {
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "conversation": {
     "id": "conv:6a62cbc9-5082-4935-837a-fdbbef562e1c",
@@ -206,7 +197,9 @@ This will give us the more substantial envelope containing the conversant inform
         "identification": {
           "speakerUri": "tag:userproxy.com,2025:abc123",
           "serviceUrl": "https://userproxy.com",
+          "organization": "N/A",
           "conversationalName": "John Doe",
+          "synopsis": "A user of the system.",
           "role": "User"
         }
       },
@@ -219,12 +212,6 @@ This will give us the more substantial envelope containing the conversant inform
           "department": "Reservations and Customer Service",
           "role": "Reservation Specialist",
           "synopsis": "Reservation specialist as part of the Travelbot system."
-        },
-        "persistentState": {
-          "conversationEnded": null,
-          "conversationActive": true,
-          "conversationPaused": false,
-          "conversationResumed": null
         }
       }
     ]
@@ -261,7 +248,7 @@ The envelope now looks like this:
 ```json
 {
   "schema": {
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "conversation": {
     "id": "conv:296b03ef-569b-4c52-b436-6875ea63e4f6",
@@ -372,13 +359,11 @@ Which would lead to the utterance being re-defined to the following in the envel
     ...
 ```
 
-#### Adding Context and DialogHistory
+#### Adding DialogHistory to an Invite Event
 
-We can also add a Context event to an envelope to provide context for the other events in the envelope.  ContextEvents have one standardized optional parameter `dialogHistory`. They can also have any number of additional arbitrary keys and contents.    
+In Open Floor 1.1.0, dialog history can be passed to an agent being invited via the `InviteEvent` parameters. This allows the invited agent to have context about the conversation so far.
 
-There is no limit to the number of Context Events that can be added to an envelope.
-
-We show below how dialog history of the last for utterances could be added to the envelope.  Individual agents can choose exactly what they put into the dialog history or the floor manager could be used to maintain this a generic context event in all envelopes that cross the floor.
+We show below how dialog history of the last four utterances could be added to an invite event.
 
 In this example we create the four utterances that make up the dialog history from JSON for brevity.
 
@@ -391,11 +376,12 @@ dialog_history.append(DialogEvent.from_json('{"id": "event-2", "speakerUri": "ta
 dialog_history.append(DialogEvent.from_json('{"id": "event-3", "speakerUri": "tag:userproxy.com,2025:abc123", "span": {"startTime": "2024-03-14T12:00:05.000000"}, "features": {"text": {"mimeType": "text/plain", "tokens": [{"value": "i need to book a flight"}]}}}'))
 dialog_history.append(DialogEvent.from_json('{"id": "event-4", "speakerUri": "tag:dev.travelbot,2025:0001", "span": {"startTime": "2024-03-14T12:12:00.000000"}, "features": {"text": {"mimeType": "text/plain", "tokens": [{"value": "i can help you with that"}]}}}'))
 
+invite_event = InviteEvent(
+    to=To(speakerUri="tag:new-agent.com,2025:0001"),
+    dialogHistory=dialog_history
+)
 
-context_event=ContextEvent(dialogHistory=dialog_history)
-context_event.parameters["arbitrary_key"]="arbitrary_value"
-
-envelope.events.append(context_event)
+envelope.events.append(invite_event)
 
 #print the envelope
 print(envelope.to_json(indent=2))
@@ -405,16 +391,18 @@ This leaves us with our final envelope:
 ```json
 {
   "schema": {
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "conversation": {
-    "id": "conv:8870e238-e42e-4332-9ba8-edb4d47faf54",
+    "id": "conv:5aeba7d5-6d8d-4265-a83e-ca3b86d9c9a0",
     "conversants": [
       {
         "identification": {
           "speakerUri": "tag:userproxy.com,2025:abc123",
           "serviceUrl": "https://userproxy.com",
+          "organization": "N/A",
           "conversationalName": "John Doe",
+          "synopsis": "A user of the system.",
           "role": "User"
         }
       },
@@ -424,9 +412,9 @@ This leaves us with our final envelope:
           "serviceUrl": "https://dev.travelbot.ee/openfloor/conversation",
           "organization": "Travelbot Inc.",
           "conversationalName": "travelbot",
+          "synopsis": "Reservation specialist as part of the Travelbot system.",
           "department": "Reservations and Customer Service",
-          "role": "Reservation Specialist",
-          "synopsis": "Reservation specialist as part of the Travelbot system."
+          "role": "Reservation Specialist"
         }
       }
     ]
@@ -443,10 +431,10 @@ This leaves us with our final envelope:
       },
       "parameters": {
         "dialogEvent": {
-          "id": "de:70b102e9-a3e9-4338-bb16-801d928eb8fd",
+          "id": "de:8e4e0263-3dc9-4520-b895-08d7b3d1b7d8",
           "speakerUri": "tag:userproxy.com,2025:abc123",
           "span": {
-            "startTime": "2025-05-09T16:38:30.562920"
+            "startTime": "2026-01-25T20:57:49.625166"
           },
           "features": {
             "text": {
@@ -462,14 +450,17 @@ This leaves us with our final envelope:
       }
     },
     {
-      "eventType": "context",
+      "eventType": "invite",
+      "to": {
+        "speakerUri": "tag:new-agent.com,2025:0001"
+      },
       "parameters": {
         "dialogHistory": [
           {
             "id": "event-1",
             "speakerUri": "tag:userproxy.com,2025:abc123",
             "span": {
-              "startTime": "2025-05-09T16:38:30.576182"
+              "startTime": "2026-01-25T20:57:49.625302"
             },
             "features": {
               "text": {
@@ -486,7 +477,7 @@ This leaves us with our final envelope:
             "id": "event-2",
             "speakerUri": "tag:dev.travelbot,2025:0001",
             "span": {
-              "startTime": "2025-05-09T16:38:30.576242"
+              "startTime": "2026-01-25T20:57:49.625357"
             },
             "features": {
               "text": {
@@ -503,7 +494,7 @@ This leaves us with our final envelope:
             "id": "event-3",
             "speakerUri": "tag:userproxy.com,2025:abc123",
             "span": {
-              "startTime": "2025-05-09T16:38:30.576280"
+              "startTime": "2026-01-25T20:57:49.625384"
             },
             "features": {
               "text": {
@@ -520,7 +511,7 @@ This leaves us with our final envelope:
             "id": "event-4",
             "speakerUri": "tag:dev.travelbot,2025:0001",
             "span": {
-              "startTime": "2025-05-09T16:38:30.576314"
+              "startTime": "2026-01-25T20:57:49.625445"
             },
             "features": {
               "text": {
@@ -533,8 +524,7 @@ This leaves us with our final envelope:
               }
             }
           }
-        ],
-        "arbitrary_key": "arbitrary_value"
+        ]
       }
     }
   ]
@@ -582,9 +572,9 @@ The Open Floor message format uses a JSON structure that includes:
 The library supports various event types:
 
 - `UtteranceEvent`: For sending and receiving messages
-- `ContextEvent`: For providing additional context
-- `InviteEvent`: For inviting agents to join conversations
+- `InviteEvent`: For inviting agents to join conversations (supports dialogHistory parameter)
 - `UninviteEvent`: For removing agents from conversations
+- `AcceptInviteEvent`: For accepting invitations to join conversations
 - `DeclineInviteEvent`: For declining invitations
 - `ByeEvent`: For leaving conversations
 - `GetManifestsEvent`: For requesting agent manifests
@@ -592,6 +582,7 @@ The library supports various event types:
 - `RequestFloorEvent`: For requesting the conversational floor
 - `GrantFloorEvent`: For granting the floor to an agent
 - `RevokeFloorEvent`: For revoking the floor from an agent
+- `YieldFloorEvent`: For yielding the floor
 
 ### Dialog Events
 
