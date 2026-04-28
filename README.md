@@ -536,7 +536,7 @@ This leaves us with our final envelope:
 
 The openfloor standard is defined over an interconnected family of three specifications.  These are:
 
-1. **[Open Floor Inter-Agent Message Specification Version 1.0.0](docs/InteroperableConvEnvSpec.md)**
+1. **[Open Floor Inter-Agent Message Specification Version 1.1.0](docs/InteroperableConvEnvSpec.md)**
 
    - Defines the message envelope format for inter-agent communication
    - Specifies conversation management and event types
@@ -550,7 +550,7 @@ The openfloor standard is defined over an interconnected family of three specifi
    - Enables cross-references between features
    - Supports multiple languages and custom feature types
 
-3. **[Assistant Manifest Specification Version 1.0.0](docs/AssistantManifestSpec.md)**
+3. **[Assistant Manifest Specification Version 1.0.1](docs/AssistantManifestSpec.md)**
    - Defines how agents describe their capabilities
    - Includes identification and supported layers
    - Enables agent discovery and capability matching
