@@ -1,4 +1,4 @@
-python/src/openfloor/__pycache__/*
+**/__pycache__/
 openfloor.egg-info/*
 dist/*
 openfloor.egg-info/PKG-INFO
