@@ -1,9 +1,9 @@
 from typing import Optional, List, Tuple, Dict
-from .envelope import Event
 from abc import ABC, abstractmethod
+from events import Events
 from openfloor import Parameters, DialogEvent, TextFeature, To, Sender, Manifest, Conversation, Envelope, Event, InviteEvent, UtteranceEvent, UninviteEvent, AcceptInviteEvent, DeclineInviteEvent, ByeEvent, GetManifestsEvent, PublishManifestsEvent, RequestFloorEvent, GrantFloorEvent, RevokeFloorEvent, YieldFloorEvent
 
-class OpenFloorEvents(Event):
+class OpenFloorEvents(Events):
     """Base class for Open Floor agents that defines event handlers"""
     __events__ = (
         'on_envelope',
