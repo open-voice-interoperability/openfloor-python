@@ -7,11 +7,12 @@ class Identification(JsonSerializableDataclass):
     """Represents the identification section of a conversant"""
     speakerUri: str
     serviceUrl: str
-    organization: Optional[str] = None
-    conversationalName: Optional[str] = None
+    organization: str
+    conversationalName: str
+    synopsis: str
     department: Optional[str] = None
     role: Optional[str] = None
-    synopsis: Optional[str] = None
+    openFloorRoles: Optional[Dict[str, bool]] = None
 
     def __post_init__(self):
         """Initialize after dataclass initialization"""
@@ -19,21 +20,26 @@ class Identification(JsonSerializableDataclass):
             raise ValueError("speakerUri is required to create an instance of the Identification class")
         if self.serviceUrl is None:
             raise ValueError("serviceUrl is required to create an instance of the Identification class")
+        if self.organization is None:
+            raise ValueError("organization is required to create an instance of the Identification class")
+        if self.conversationalName is None:
+            raise ValueError("conversationalName is required to create an instance of the Identification class")
+        if self.synopsis is None:
+            raise ValueError("synopsis is required to create an instance of the Identification class")
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Identification instance to JSON-compatible dictionary"""
         yield 'speakerUri', self.speakerUri
         yield 'serviceUrl', self.serviceUrl
-        if self.organization is not None:
-            yield 'organization', self.organization
-        if self.conversationalName is not None:
-            yield 'conversationalName', self.conversationalName
+        yield 'organization', self.organization
+        yield 'conversationalName', self.conversationalName
+        yield 'synopsis', self.synopsis
         if self.department is not None:
             yield 'department', self.department
         if self.role is not None:
             yield 'role', self.role
-        if self.synopsis is not None:
-            yield 'synopsis', self.synopsis
+        if self.openFloorRoles is not None:
+            yield 'openFloorRoles', self.openFloorRoles
 
 @dataclass
 class SupportedLayers(JsonSerializableDataclass):

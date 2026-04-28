@@ -106,9 +106,11 @@ chat_agent_details = Manifest(
 
 user_details = Manifest(
   Identification(
-            conversationalName="John Doe",
-            speakerUri="tag:userproxy.com,2025:abc123", 
+            speakerUri="tag:userproxy.com,2025:abc123",
             serviceUrl="https://userproxy.com",
+            organization="N/A",
+            conversationalName="John Doe",
+            synopsis="A user of the system.",
             role="User"
         )
 )
