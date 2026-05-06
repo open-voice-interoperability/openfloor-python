@@ -250,7 +250,7 @@
 <span id="openfloor-envelope"></span><h1>openfloor.envelope<a class="headerlink" href="#module-openfloor.envelope" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="openfloor.envelope.Conversant">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.envelope.</span></span><span class="sig-name descname"><span class="pre">Conversant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identification</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistentState=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/envelope.html#Conversant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.envelope.Conversant" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.envelope.</span></span><span class="sig-name descname"><span class="pre">Conversant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identification</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/envelope.html#Conversant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.envelope.Conversant" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="json_serializable.html#openfloor.json_serializable.JsonSerializableDataclass" title="openfloor.json_serializable.JsonSerializableDataclass"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonSerializableDataclass</span></code></a></p>
 <p>Represents a conversant in the conversation</p>
 <dl class="py method">
@@ -269,21 +269,26 @@
 <span class="sig-name descname"><span class="pre">identification</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="manifest.html#openfloor.manifest.Identification" title="openfloor.manifest.Identification"><code class="xref py py-class docutils literal notranslate"><span class="pre">Identification</span></code></a></em><a class="headerlink" href="#openfloor.envelope.Conversant.identification" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="openfloor.envelope.Conversant.persistentState">
-<span class="sig-name descname"><span class="pre">persistentState</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#openfloor.envelope.PersistentState" title="openfloor.envelope.PersistentState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PersistentState</span></code></a></em><a class="headerlink" href="#openfloor.envelope.Conversant.persistentState" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="openfloor.envelope.Conversation">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.envelope.</span></span><span class="sig-name descname"><span class="pre">Conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversants=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/envelope.html#Conversation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.envelope.Conversation" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.envelope.</span></span><span class="sig-name descname"><span class="pre">Conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversants=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignedFloorRoles=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floorGranted=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/envelope.html#Conversation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.envelope.Conversation" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="json_serializable.html#openfloor.json_serializable.JsonSerializableDataclass" title="openfloor.json_serializable.JsonSerializableDataclass"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonSerializableDataclass</span></code></a></p>
 <p>Represents the conversation section of an Open Floor message envelope</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="openfloor.envelope.Conversation.assignedFloorRoles">
+<span class="sig-name descname"><span class="pre">assignedFloorRoles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#openfloor.envelope.Conversation.assignedFloorRoles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="openfloor.envelope.Conversation.conversants">
 <span class="sig-name descname"><span class="pre">conversants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="#openfloor.envelope.Conversant" title="openfloor.envelope.Conversant"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conversant</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#openfloor.envelope.Conversation.conversants" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="openfloor.envelope.Conversation.floorGranted">
+<span class="sig-name descname"><span class="pre">floorGranted</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#openfloor.envelope.Conversation.floorGranted" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -463,7 +468,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="openfloor.envelope.Schema">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.envelope.</span></span><span class="sig-name descname"><span class="pre">Schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1.0.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/envelope.html#Schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.envelope.Schema" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.envelope.</span></span><span class="sig-name descname"><span class="pre">Schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1.1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/envelope.html#Schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.envelope.Schema" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="json_serializable.html#openfloor.json_serializable.JsonSerializableDataclass" title="openfloor.json_serializable.JsonSerializableDataclass"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonSerializableDataclass</span></code></a></p>
 <p>Represents the schema section of an Open Floor message envelope</p>
 <dl class="py attribute">
@@ -473,7 +478,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="openfloor.envelope.Schema.version">
-<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1.0.0'</span></em><a class="headerlink" href="#openfloor.envelope.Schema.version" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1.1.0'</span></em><a class="headerlink" href="#openfloor.envelope.Schema.version" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -570,11 +575,12 @@
 <li><a class="reference internal" href="#openfloor.envelope.Conversant"><code class="docutils literal notranslate"><span class="pre">Conversant</span></code></a><ul>
 <li><a class="reference internal" href="#openfloor.envelope.Conversant.from_dict"><code class="docutils literal notranslate"><span class="pre">Conversant.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.envelope.Conversant.identification"><code class="docutils literal notranslate"><span class="pre">Conversant.identification</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.envelope.Conversant.persistentState"><code class="docutils literal notranslate"><span class="pre">Conversant.persistentState</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#openfloor.envelope.Conversation"><code class="docutils literal notranslate"><span class="pre">Conversation</span></code></a><ul>
+<li><a class="reference internal" href="#openfloor.envelope.Conversation.assignedFloorRoles"><code class="docutils literal notranslate"><span class="pre">Conversation.assignedFloorRoles</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.envelope.Conversation.conversants"><code class="docutils literal notranslate"><span class="pre">Conversation.conversants</span></code></a></li>
+<li><a class="reference internal" href="#openfloor.envelope.Conversation.floorGranted"><code class="docutils literal notranslate"><span class="pre">Conversation.floorGranted</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.envelope.Conversation.from_dict"><code class="docutils literal notranslate"><span class="pre">Conversation.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.envelope.Conversation.id"><code class="docutils literal notranslate"><span class="pre">Conversation.id</span></code></a></li>
 </ul>

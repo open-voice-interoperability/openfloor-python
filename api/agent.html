@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -240,172 +240,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-openfloor.agent">
-<span id="agent-api-reference"></span><h1>Agent API Reference<a class="headerlink" href="#module-openfloor.agent" title="Link to this heading">¶</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.agent.</span></span><span class="sig-name descname"><span class="pre">BotAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifest</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#openfloor.agent.OpenFloorAgent" title="openfloor.agent.OpenFloorAgent"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenFloorAgent</span></code></a></p>
-<p>BotAgent is a simple bot agent.  It can be used as a class in its own right or subclassed to create more complex agents.</p>
-<p>The class provides default event handlers that meet the Open Floor specification
-requirements for a bot agent.</p>
-<p>The default on_envelope handler processes events in a specific order, checking for invite events first if the bot is not already in
-a conversation.</p>
-<p>Event handlers can be customized by subclassing and overriding the default handlers.</p>
-<p>For a minimal implementation, all that is required is the following
-- Implement a handler for invite events to send a greeting
-- Implement a handler for bye events to send a farewell
-- Implement a handler for utterance events to handle conversation</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_context">
-<span class="sig-name descname"><span class="pre">bot_on_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_context" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_envelope">
-<span class="sig-name descname"><span class="pre">bot_on_envelope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_envelope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_envelope" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="envelope.html#openfloor.envelope.Envelope" title="openfloor.envelope.Envelope"><code class="xref py py-class docutils literal notranslate"><span class="pre">Envelope</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_get_manifests">
-<span class="sig-name descname"><span class="pre">bot_on_get_manifests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_get_manifests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_get_manifests" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_grant_floor">
-<span class="sig-name descname"><span class="pre">bot_on_grant_floor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_grant_floor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_grant_floor" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_invite">
-<span class="sig-name descname"><span class="pre">bot_on_invite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_invite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_invite" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_revoke_floor">
-<span class="sig-name descname"><span class="pre">bot_on_revoke_floor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_revoke_floor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_revoke_floor" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_uninvite">
-<span class="sig-name descname"><span class="pre">bot_on_uninvite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_uninvite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_uninvite" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.bot_on_utterance">
-<span class="sig-name descname"><span class="pre">bot_on_utterance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.bot_on_utterance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.bot_on_utterance" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.BotAgent.process_envelope">
-<span class="sig-name descname"><span class="pre">process_envelope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_envelope</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#BotAgent.process_envelope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.BotAgent.process_envelope" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="envelope.html#openfloor.envelope.Envelope" title="openfloor.envelope.Envelope"><code class="xref py py-class docutils literal notranslate"><span class="pre">Envelope</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="openfloor.agent.OpenFloorAgent">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.agent.</span></span><span class="sig-name descname"><span class="pre">OpenFloorAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifest</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#OpenFloorAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.OpenFloorAgent" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#openfloor.agent.OpenFloorEvents" title="openfloor.agent.OpenFloorEvents"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenFloorEvents</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="openfloor.agent.OpenFloorAgent.add_metadata">
-<span class="sig-name descname"><span class="pre">add_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#OpenFloorAgent.add_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.OpenFloorAgent.add_metadata" title="Link to this definition">¶</a></dt>
-<dd><p>Split events into those intended for this agent and those for other agents</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>events</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="envelope.html#openfloor.envelope.Event" title="openfloor.envelope.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]</span>) – List of events to split</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>event: The original event</p></li>
-<li><dl class="simple">
-<dt>metadata: Dictionary containing:</dt><dd><ul>
-<li><p>addressed_to_me: Boolean indicating if event is intended for this agent</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of tuples (event, metadata) where</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="openfloor.agent.OpenFloorAgent.serviceUrl">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">serviceUrl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#openfloor.agent.OpenFloorAgent.serviceUrl" title="Link to this definition">¶</a></dt>
-<dd><p>A convenient shorthand to get the serviceUrl from the manifest</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="openfloor.agent.OpenFloorAgent.speakerUri">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">speakerUri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#openfloor.agent.OpenFloorAgent.speakerUri" title="Link to this definition">¶</a></dt>
-<dd><p>A convenient shorthand to get the speakerUri from the manifest</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="openfloor.agent.OpenFloorEvents">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.agent.</span></span><span class="sig-name descname"><span class="pre">OpenFloorEvents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/agent.html#OpenFloorEvents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.agent.OpenFloorEvents" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="envelope.html#openfloor.envelope.Event" title="openfloor.envelope.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></p>
-<p>Base class for Open Floor agents that defines event handlers</p>
-</dd></dl>
-
+          <section id="agent-api-reference">
+<h1>Agent API Reference<a class="headerlink" href="#agent-api-reference" title="Link to this heading">¶</a></h1>
 </section>
 
         </article>
@@ -451,45 +293,8 @@ a conversation.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Agent API Reference</a><ul>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent"><code class="docutils literal notranslate"><span class="pre">BotAgent</span></code></a><ul>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_context"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_context()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_envelope"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_envelope()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_get_manifests"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_get_manifests()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_grant_floor"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_grant_floor()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_invite"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_invite()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_revoke_floor"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_revoke_floor()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_uninvite"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_uninvite()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.bot_on_utterance"><code class="docutils literal notranslate"><span class="pre">BotAgent.bot_on_utterance()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.BotAgent.process_envelope"><code class="docutils literal notranslate"><span class="pre">BotAgent.process_envelope()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#openfloor.agent.OpenFloorAgent"><code class="docutils literal notranslate"><span class="pre">OpenFloorAgent</span></code></a><ul>
-<li><a class="reference internal" href="#openfloor.agent.OpenFloorAgent.add_metadata"><code class="docutils literal notranslate"><span class="pre">OpenFloorAgent.add_metadata()</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.OpenFloorAgent.serviceUrl"><code class="docutils literal notranslate"><span class="pre">OpenFloorAgent.serviceUrl</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.agent.OpenFloorAgent.speakerUri"><code class="docutils literal notranslate"><span class="pre">OpenFloorAgent.speakerUri</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#openfloor.agent.OpenFloorEvents"><code class="docutils literal notranslate"><span class="pre">OpenFloorEvents</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

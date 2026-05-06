@@ -316,13 +316,28 @@
 <a class="viewcode-back" href="../../api/json_serializable.html#openfloor.json_serializable.JsonSerializable.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;JsonSerializableDict&#39;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an instance from a dictionary or instance&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an instance from a dictionary or instance</span>
+
+<span class="sd">        When a dictionary is provided any keys that do not correspond to</span>
+<span class="sd">        dataclass fields are silently preserved in ``_undefined_extras``</span>
+<span class="sd">        rather than being passed to the constructor.  This ensures that</span>
+<span class="sd">        unexpected data from external sources does not raise ``TypeError``</span>
+<span class="sd">        during construction.  The preserved extras are re-emitted by</span>
+<span class="sd">        ``__json__()``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">defined_kwargs</span><span class="p">,</span> <span class="n">undefined_kwargs</span> <span class="o">=</span> <span class="n">split_kwargs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">defined_kwargs</span><span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">_undefined_extras</span> <span class="o">=</span> <span class="n">undefined_kwargs</span>
+            <span class="k">return</span> <span class="n">instance</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot create </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_undefined_extras</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the undefined extras captured by :meth:`from_dict`, or an empty dict.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_undefined_extras&#39;</span><span class="p">,</span> <span class="p">{})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__json__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Default JSON serialization method&quot;&quot;&quot;</span>
@@ -414,7 +429,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__json__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;JSON serialization for dictionary-like objects&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">}</span></div>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">}</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_undefined_extras</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="JsonSerializableList">
@@ -434,7 +451,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert instance to JSON-compatible list&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">JsonSerializableDict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">JsonSerializableDataclass</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">item</span><span class="o">.</span><span class="n">__json__</span><span class="p">()</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">JsonSerializableList</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -507,17 +524,28 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__json__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;JSON serialization for dataclass objects&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">}</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_undefined_extras</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="JsonSerializableDataclass.from_dict">
 <a class="viewcode-back" href="../../api/json_serializable.html#openfloor.json_serializable.JsonSerializableDataclass.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;JsonSerializableDataclass&#39;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an instance from a dictionary&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an instance from a dictionary.</span>
+
+<span class="sd">        Extra keys in ``data`` are silently preserved in</span>
+<span class="sd">        ``_undefined_extras`` via :func:`split_kwargs`, allowing callers to</span>
+<span class="sd">        pass in unfiltered JSON blobs without causing constructor failures.</span>
+<span class="sd">        The preserved extras are re-emitted by ``__json__()``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">defined_kwargs</span><span class="p">,</span> <span class="n">undefined_kwargs</span> <span class="o">=</span> <span class="n">split_kwargs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">defined_kwargs</span><span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">_undefined_extras</span> <span class="o">=</span> <span class="n">undefined_kwargs</span>
+            <span class="k">return</span> <span class="n">instance</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot create </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
@@ -541,23 +569,19 @@
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        Tuple of (defined_fields, undefined_fields) where each is a dictionary</span>
-<span class="sd">        of the respective fields from kwargs. Defined fields that are not in kwargs</span>
-<span class="sd">        will be included in defined_fields with a value of None.</span>
+<span class="sd">        of the respective fields from kwargs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get the defined fields for the class</span>
     <span class="n">defined_fields</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__dataclass_fields__&#39;</span><span class="p">):</span>
         <span class="n">defined_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    
-    <span class="c1"># Initialize defined_kwargs with all defined fields set to None</span>
-    <span class="n">defined_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">defined_fields</span><span class="p">}</span>
-    
-    <span class="c1"># Update defined_kwargs with values from kwargs</span>
-    <span class="n">defined_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">defined_fields</span><span class="p">})</span>
-    
+
+    <span class="c1"># Only include kwargs whose keys match defined fields</span>
+    <span class="n">defined_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">defined_fields</span><span class="p">}</span>
+
     <span class="c1"># Get undefined fields</span>
     <span class="n">undefined_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">defined_fields</span><span class="p">}</span>
-    
+
     <span class="k">return</span> <span class="n">defined_kwargs</span><span class="p">,</span> <span class="n">undefined_kwargs</span></div>
 
 </pre></div>

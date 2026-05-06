@@ -249,6 +249,18 @@
           <section id="module-openfloor.events">
 <span id="openfloor-events"></span><h1>openfloor.events<a class="headerlink" href="#module-openfloor.events" title="Link to this heading">¶</a></h1>
 <dl class="py class">
+<dt class="sig sig-object py" id="openfloor.events.AcceptInviteEvent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.events.</span></span><span class="sig-name descname"><span class="pre">AcceptInviteEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventType='acceptInvite'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/events.html#AcceptInviteEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.events.AcceptInviteEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="envelope.html#openfloor.envelope.Event" title="openfloor.envelope.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></p>
+<p>Represents accepting an invitation to join the conversation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="openfloor.events.AcceptInviteEvent.eventType">
+<span class="sig-name descname"><span class="pre">eventType</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'acceptInvite'</span></em><a class="headerlink" href="#openfloor.events.AcceptInviteEvent.eventType" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="openfloor.events.ByeEvent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.events.</span></span><span class="sig-name descname"><span class="pre">ByeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventType='bye'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/events.html#ByeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.events.ByeEvent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="envelope.html#openfloor.envelope.Event" title="openfloor.envelope.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></p>
@@ -261,28 +273,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="openfloor.events.ByeEvent.parameters">
 <span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="envelope.html#openfloor.envelope.Parameters" title="openfloor.envelope.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></em><a class="headerlink" href="#openfloor.events.ByeEvent.parameters" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="openfloor.events.ContextEvent">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.events.</span></span><span class="sig-name descname"><span class="pre">ContextEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventType='context'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialogHistory=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/events.html#ContextEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.events.ContextEvent" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="envelope.html#openfloor.envelope.Event" title="openfloor.envelope.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></p>
-<p>Represents a context event providing additional information to recipient agents</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="openfloor.events.ContextEvent.dialogHistory">
-<span class="sig-name descname"><span class="pre">dialogHistory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="dialog_event.html#openfloor.dialog_event.DialogHistory" title="openfloor.dialog_event.DialogHistory"><code class="xref py py-class docutils literal notranslate"><span class="pre">DialogHistory</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#openfloor.events.ContextEvent.dialogHistory" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="openfloor.events.ContextEvent.eventType">
-<span class="sig-name descname"><span class="pre">eventType</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'context'</span></em><a class="headerlink" href="#openfloor.events.ContextEvent.eventType" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="openfloor.events.ContextEvent.parameters">
-<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="envelope.html#openfloor.envelope.Parameters" title="openfloor.envelope.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></em><a class="headerlink" href="#openfloor.events.ContextEvent.parameters" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -330,12 +320,22 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="openfloor.events.InviteEvent">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.events.</span></span><span class="sig-name descname"><span class="pre">InviteEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventType='invite'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/events.html#InviteEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.events.InviteEvent" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.events.</span></span><span class="sig-name descname"><span class="pre">InviteEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventType='invite'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialogHistory=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/events.html#InviteEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.events.InviteEvent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="envelope.html#openfloor.envelope.Event" title="openfloor.envelope.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></p>
 <p>Represents an invitation for an agent to join the conversation</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="openfloor.events.InviteEvent.dialogHistory">
+<span class="sig-name descname"><span class="pre">dialogHistory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="dialog_event.html#openfloor.dialog_event.DialogHistory" title="openfloor.dialog_event.DialogHistory"><code class="xref py py-class docutils literal notranslate"><span class="pre">DialogHistory</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#openfloor.events.InviteEvent.dialogHistory" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="openfloor.events.InviteEvent.eventType">
 <span class="sig-name descname"><span class="pre">eventType</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invite'</span></em><a class="headerlink" href="#openfloor.events.InviteEvent.eventType" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="openfloor.events.InviteEvent.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="envelope.html#openfloor.envelope.Parameters" title="openfloor.envelope.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></em><a class="headerlink" href="#openfloor.events.InviteEvent.parameters" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -415,6 +415,18 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="openfloor.events.YieldFloorEvent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">openfloor.events.</span></span><span class="sig-name descname"><span class="pre">YieldFloorEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventType='yieldFloor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/events.html#YieldFloorEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.events.YieldFloorEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="envelope.html#openfloor.envelope.Event" title="openfloor.envelope.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></p>
+<p>Represents yielding the conversational floor</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="openfloor.events.YieldFloorEvent.eventType">
+<span class="sig-name descname"><span class="pre">eventType</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'yieldFloor'</span></em><a class="headerlink" href="#openfloor.events.YieldFloorEvent.eventType" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -473,15 +485,13 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">openfloor.events</a><ul>
+<li><a class="reference internal" href="#openfloor.events.AcceptInviteEvent"><code class="docutils literal notranslate"><span class="pre">AcceptInviteEvent</span></code></a><ul>
+<li><a class="reference internal" href="#openfloor.events.AcceptInviteEvent.eventType"><code class="docutils literal notranslate"><span class="pre">AcceptInviteEvent.eventType</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#openfloor.events.ByeEvent"><code class="docutils literal notranslate"><span class="pre">ByeEvent</span></code></a><ul>
 <li><a class="reference internal" href="#openfloor.events.ByeEvent.eventType"><code class="docutils literal notranslate"><span class="pre">ByeEvent.eventType</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.events.ByeEvent.parameters"><code class="docutils literal notranslate"><span class="pre">ByeEvent.parameters</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#openfloor.events.ContextEvent"><code class="docutils literal notranslate"><span class="pre">ContextEvent</span></code></a><ul>
-<li><a class="reference internal" href="#openfloor.events.ContextEvent.dialogHistory"><code class="docutils literal notranslate"><span class="pre">ContextEvent.dialogHistory</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.events.ContextEvent.eventType"><code class="docutils literal notranslate"><span class="pre">ContextEvent.eventType</span></code></a></li>
-<li><a class="reference internal" href="#openfloor.events.ContextEvent.parameters"><code class="docutils literal notranslate"><span class="pre">ContextEvent.parameters</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#openfloor.events.DeclineInviteEvent"><code class="docutils literal notranslate"><span class="pre">DeclineInviteEvent</span></code></a><ul>
@@ -498,7 +508,9 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#openfloor.events.InviteEvent"><code class="docutils literal notranslate"><span class="pre">InviteEvent</span></code></a><ul>
+<li><a class="reference internal" href="#openfloor.events.InviteEvent.dialogHistory"><code class="docutils literal notranslate"><span class="pre">InviteEvent.dialogHistory</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.events.InviteEvent.eventType"><code class="docutils literal notranslate"><span class="pre">InviteEvent.eventType</span></code></a></li>
+<li><a class="reference internal" href="#openfloor.events.InviteEvent.parameters"><code class="docutils literal notranslate"><span class="pre">InviteEvent.parameters</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#openfloor.events.PublishManifestsEvent"><code class="docutils literal notranslate"><span class="pre">PublishManifestsEvent</span></code></a><ul>
@@ -522,6 +534,10 @@
 <li><a class="reference internal" href="#openfloor.events.UtteranceEvent.dialogEvent"><code class="docutils literal notranslate"><span class="pre">UtteranceEvent.dialogEvent</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.events.UtteranceEvent.eventType"><code class="docutils literal notranslate"><span class="pre">UtteranceEvent.eventType</span></code></a></li>
 <li><a class="reference internal" href="#openfloor.events.UtteranceEvent.parameters"><code class="docutils literal notranslate"><span class="pre">UtteranceEvent.parameters</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#openfloor.events.YieldFloorEvent"><code class="docutils literal notranslate"><span class="pre">YieldFloorEvent</span></code></a><ul>
+<li><a class="reference internal" href="#openfloor.events.YieldFloorEvent.eventType"><code class="docutils literal notranslate"><span class="pre">YieldFloorEvent.eventType</span></code></a></li>
 </ul>
 </li>
 </ul>

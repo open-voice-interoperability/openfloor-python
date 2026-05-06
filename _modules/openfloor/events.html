@@ -266,37 +266,11 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert UtteranceEvent instance to JSON-compatible dictionary&quot;&quot;&quot;</span>
         <span class="k">yield</span> <span class="s1">&#39;eventType&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventType</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">__json__</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">yield</span> <span class="s1">&#39;reason&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reason</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ContextEvent">
-<a class="viewcode-back" href="../../api/events.html#openfloor.events.ContextEvent">[docs]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ContextEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a context event providing additional information to recipient agents&quot;&quot;&quot;</span>
-    <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;context&quot;</span>
-    <span class="n">dialogHistory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DialogHistory</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">parameters</span><span class="p">:</span> <span class="n">Parameters</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Parameters</span><span class="p">(</span><span class="n">dialogHistory</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dialogHistory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;dialogHistory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dialogHistory</span>
-        <span class="k">if</span> <span class="s2">&quot;dialogHistory&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;dialogHistory&quot;</span><span class="p">],</span> <span class="n">DialogHistory</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;dialogHistory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DialogHistory</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert ContextEvent instance to JSON-compatible dictionary&quot;&quot;&quot;</span>
-        <span class="k">yield</span> <span class="s1">&#39;eventType&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventType</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="s1">&#39;reason&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reason</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span></div>
+            <span class="k">yield</span> <span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">__json__</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="InviteEvent">
@@ -304,7 +278,26 @@
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">InviteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an invitation for an agent to join the conversation&quot;&quot;&quot;</span>
-    <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;invite&quot;</span></div>
+    <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;invite&quot;</span>
+    <span class="n">dialogHistory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DialogHistory</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">Parameters</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">Parameters</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize after dataclass initialization&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dialogHistory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;dialogHistory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dialogHistory</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert InviteEvent instance to JSON-compatible dictionary&quot;&quot;&quot;</span>
+        <span class="k">yield</span> <span class="s1">&#39;eventType&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventType</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">__json__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s1">&#39;reason&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reason</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">__json__</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="UninviteEvent">
@@ -313,6 +306,14 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">UninviteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents removing an agent from the conversation&quot;&quot;&quot;</span>
     <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;uninvite&quot;</span></div>
+
+
+<div class="viewcode-block" id="AcceptInviteEvent">
+<a class="viewcode-back" href="../../api/events.html#openfloor.events.AcceptInviteEvent">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AcceptInviteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents accepting an invitation to join the conversation&quot;&quot;&quot;</span>
+    <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;acceptInvite&quot;</span></div>
 
 
 <div class="viewcode-block" id="DeclineInviteEvent">
@@ -376,7 +377,15 @@
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RevokeFloorEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents revoking the conversational floor from an agent&quot;&quot;&quot;</span>
-    <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;revokeFloor&quot;</span> </div>
+    <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;revokeFloor&quot;</span></div>
+
+
+<div class="viewcode-block" id="YieldFloorEvent">
+<a class="viewcode-back" href="../../api/events.html#openfloor.events.YieldFloorEvent">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">YieldFloorEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents yielding the conversational floor&quot;&quot;&quot;</span>
+    <span class="n">eventType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;yieldFloor&quot;</span></div>
 
 </pre></div>
         </article>

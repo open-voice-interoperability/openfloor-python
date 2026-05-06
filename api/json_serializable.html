@@ -257,6 +257,12 @@
 <dt class="sig sig-object py" id="openfloor.json_serializable.JsonSerializable.from_dict">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/json_serializable.html#JsonSerializable.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.json_serializable.JsonSerializable.from_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Create an instance from a dictionary or instance</p>
+<p>When a dictionary is provided any keys that do not correspond to
+dataclass fields are silently preserved in <code class="docutils literal notranslate"><span class="pre">_undefined_extras</span></code>
+rather than being passed to the constructor.  This ensures that
+unexpected data from external sources does not raise <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>
+during construction.  The preserved extras are re-emitted by
+<code class="docutils literal notranslate"><span class="pre">__json__()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#openfloor.json_serializable.JsonSerializableDict" title="openfloor.json_serializable.JsonSerializableDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonSerializableDict</span></code></a></span></p>
@@ -329,7 +335,11 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="openfloor.json_serializable.JsonSerializableDataclass.from_dict">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/openfloor/json_serializable.html#JsonSerializableDataclass.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#openfloor.json_serializable.JsonSerializableDataclass.from_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Create an instance from a dictionary</p>
+<dd><p>Create an instance from a dictionary.</p>
+<p>Extra keys in <code class="docutils literal notranslate"><span class="pre">data</span></code> are silently preserved in
+<code class="docutils literal notranslate"><span class="pre">_undefined_extras</span></code> via <a class="reference internal" href="#openfloor.json_serializable.split_kwargs" title="openfloor.json_serializable.split_kwargs"><code class="xref py py-func docutils literal notranslate"><span class="pre">split_kwargs()</span></code></a>, allowing callers to
+pass in unfiltered JSON blobs without causing constructor failures.
+The preserved extras are re-emitted by <code class="docutils literal notranslate"><span class="pre">__json__()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#openfloor.json_serializable.JsonSerializableDataclass" title="openfloor.json_serializable.JsonSerializableDataclass"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonSerializableDataclass</span></code></a></span></p>
@@ -468,8 +478,7 @@
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Tuple of (defined_fields, undefined_fields) where each is a dictionary
-of the respective fields from kwargs. Defined fields that are not in kwargs
-will be included in defined_fields with a value of None.</p>
+of the respective fields from kwargs.</p>
 </dd>
 </dl>
 </dd></dl>
