@@ -108,7 +108,7 @@ class Span(JsonSerializableDataclass):
             data['startOffset'] = parse_isoduration(data['startOffset'])
         if 'endOffset' in data and isinstance(data['endOffset'], str):
             data['endOffset'] = parse_isoduration(data['endOffset'])
-        return cls(**data)
+        return super().from_dict(data)
 
 @dataclass
 class Token(JsonSerializableDataclass):
@@ -136,7 +136,7 @@ class Token(JsonSerializableDataclass):
         if self.valueUrl is not None:
             yield 'valueUrl', self.valueUrl
         if self.span is not None:
-            yield 'span', dict(self.span)
+            yield 'span', self.span.__json__()
         if self.confidence is not None:
             yield 'confidence', self.confidence
         if self.links:
@@ -147,8 +147,8 @@ class Token(JsonSerializableDataclass):
         """Create a Token instance from a dictionary"""
         if 'span' in data:
             data['span'] = Span.from_dict(data['span'])
-        return cls(**data)
-    
+        return super().from_dict(data)
+
     def linked_values(self,dialog_event) -> List[Tuple[str, Any]]:
         values=[]
         for l in self.links:
@@ -178,9 +178,9 @@ class Feature(JsonSerializableDataclass):
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Convert Feature instance to JSON-compatible dictionary"""
         yield 'mimeType', self.mimeType
-        yield 'tokens', [dict(token) for token in self.tokens]
+        yield 'tokens', [token.__json__() for token in self.tokens]
         if self.alternates:
-            yield 'alternates', [[dict(token) for token in alt] for alt in self.alternates]
+            yield 'alternates', [[token.__json__() for token in alt] for alt in self.alternates]
         if self.lang is not None:
             yield 'lang', self.lang
         if self.encoding is not None:
@@ -195,7 +195,7 @@ class Feature(JsonSerializableDataclass):
             data['tokens'] = [Token.from_dict(token) for token in data['tokens']]
         if 'alternates' in data:
             data['alternates'] = [[Token.from_dict(token) for token in alt] for alt in data['alternates']]
-        return cls(**data)
+        return super().from_dict(data)
     
 @dataclass
 class TextFeature(Feature):
@@ -232,8 +232,8 @@ class DialogEvent(JsonSerializableDataclass):
         """Convert DialogEvent instance to JSON-compatible dictionary"""
         yield 'id', self.id
         yield 'speakerUri', self.speakerUri
-        yield 'span', dict(self.span)
-        yield 'features', {name: dict(feature) for name, feature in self.features.items()}
+        yield 'span', self.span.__json__()
+        yield 'features', {name: feature.__json__() for name, feature in self.features.items()}
         if self.previousId is not None:
             yield 'previousId', self.previousId
         if self.context is not None:
@@ -246,7 +246,7 @@ class DialogEvent(JsonSerializableDataclass):
             data['span'] = Span.from_dict(data['span'])
         if 'features' in data:
             data['features'] = {name: Feature.from_dict(feature) for name, feature in data['features'].items()}
-        return cls(**data)
+        return super().from_dict(data)
 
 class DialogHistory(JsonSerializableList):
     pass

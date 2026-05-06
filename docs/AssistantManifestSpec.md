@@ -1,12 +1,12 @@
 <img src="https://github.com/open-voice-interoperability/artwork/blob/main/horizontal/color/Interoperability_Logo_color.png" width="200">
 
-# Open Floor Assistant Manifest Specification Version 1.0.0
+# Open Floor Assistant Manifest Specification Version 1.0.1
 
 **The Open Floor Project**\
 **Open Voice Interoperability Initiative - LF AI & Data Foundation**
 
-**RELEASED** \
-**Version 1.0.0**
+**DRAFT SUBJECT TO CHANGE** \
+**Version 1.0.1**
 
 *_Editor-in-Chief: David Attwater_*\
 *_Contributors: Leah Barnes, Emmett Coin,  Deborah Dahl, Diego Gosmar, Jim Larson, Rainer Türner, Dirk Schnelle-Walka, Allan Wylie_*
@@ -49,7 +49,7 @@ The Assistant Manifest is a standardized data structure that is intended to be u
 - Provide information on request to potential user-agents to assist with their own ranking of candidate agents for a specific task.
 - Provide vocalizable information that allows other agents to know how to address this agent in a conversation (e.g. what name to address the agent by)
 
-One standard that uses this document format is [[3] Interoperable Conversation Envelope Specification Version 1.0.0](https://github.com/open-voice-interoperability/docs/blob/main/specifications/ConversationEnvelope/1.0.0/InteroperableConvEnvSpec.md ). That specification defines a number of events types that are designed to help conversational agents discover other agents for certain tasks.  There are events for requesting and publishing manifests, and also events for finding and recommending agents for certain tasks.  These events make use of all or part of the contents of the Assistant Manifest. 
+One standard that uses this document format is [[3] Interoperable Conversation Envelope Specification Version 1.0.1](https://github.com/open-voice-interoperability/docs/blob/main/specifications/ConversationEnvelope/1.0.1/InteroperableConvEnvSpec.md ). That specification defines a number of events types that are designed to help conversational agents discover other agents for certain tasks.  There are events for requesting and publishing manifests, and also events for finding and recommending agents for certain tasks.  These events make use of all or part of the contents of the Assistant Manifest. 
 
 ### 1. SPECIFICATION
 #### 1.1 Representation
@@ -79,6 +79,7 @@ This specification uses _camelCase_ (i.e., no spaces with new words capitalized)
             "conversationalName": "Buerokratt",
             "department": "Passport Office",
             "role": "Immigration Specialist",
+            "openFloorRoles" : { "convener" : True },
             "synopsis": "Immigration specialist as part of the Buerokratt system."
         },
 
@@ -127,6 +128,23 @@ The primary key of this data model is the _speakerUri_ which should be a unique 
 |`synopsis`|string|A sentence summarizing who the assistant is and their area of expertise. This sentence is intended to be spoken to the user and should take less than five seconds to verbalize. In English this would typically be less than 75 characters. This is a natural language synopsis of the contents of the whole manifest and should not contain new information that is not present in the specific fields of the manifest.|"Immigration specialist as part of the Buerokratt system."|Mandatory|
 |`department`|string|The area of the organization's function that this agent reports to or is addressed by this agent's expertise.  This will be searchable and vocalizable.   |"Passport Office"|Optional|
 |`role`|string|The 'job title' or 'role' of the assistant.  This will be how the agent would describe its role in the organization or its relationship to its users.  This will be searchable and vocalizable.|"Immigration Specialist"|Optional|
+|`openFloorRoles`|dictionary[bool]|Metadata about the Open-Floor roles that this agent can perform. See section [1.6.1 Open-Floor Roles](#161-Open-Floor-Roles) for more detail. | { "convener" : True } | Optional |
+
+##### 1.6.1 Open-Floor Roles
+
+Open-Floor agents and conversants can publish in their manifest a willingness to adopt certain roles on the conversation floor.  
+
+The definitive list of valid keys is defined in [[3]](https://github.com/open-voice-interoperability/docs/blob/main/specifications/ConversationEnvelope/1.0.1/InteroperableConvEnvSpec.md).     
+
+A list of the valid roles in that document is repeated below, including the default values that will be assumed if the roles are not specified in the manifest.
+
+|Open-Floor Role|Description|Default role| 
+|-|-|-|
+|`convener`|The agent is able to act as as floor convener, dealing with invites and floor grant requests|False| 
+|`discovery`|The agent is able to act as a a discovery agent|False| 
+
+
+Note that it is the responsibility of the floor manager to assign the role of a convener to a floor. The manifest record indicates willingness to perform the role. It is not a guarantee that this role will be assigned.
 
 #### 1.7 The `capabilities` object
 
@@ -141,17 +159,17 @@ The features of each capability object are shown below.
 |`keyphrases`|string array|A list of searchable key phrases, in no particular order, that represent the key features of the service provided or topics about which questions can be answered by the assistant.  These can be words or phrases and will typically be simple noun or verb phrases, suitable, for example, for use in simple text searches.  There is no limit to the length of the list or the length of the phrases.|["visa",  "immigration", "passport","permanent resident" ],|Mandatory|
 |`languages`|string array|A list of the languages supported by this capability according to [IETF BCP 47 Language Tag [4]](https://www.rfc-editor.org/rfc/rfc5646.txt).|["en-us"]|*Default:* *Undefined*|
 `descriptions`|string array|A set of searchable texts, in no particular order, describing the services and capabilities of the assistant. These are expressed in natural language suitable, for example, for inclusion in queries or searches using natural language technologies. There is no limit to the length of the list or the length of the phrases.|["international travel to and from Estonia","permanent and temporary visa requirements when visiting Estonia"]|Mandatory|
-`supportedLayers`|dict of string arrays|A dictionary containing lists of the dialogEvent layers supported as the input and the output of this capability. See [[2] Open Floor Dialog Event Object Specification Version 1.0.2](https://github.com/open-voice-interoperability/docs/blob/main/specifications/DialogEvents/1.0.2/InteropDialogEventSpecs.md) and [[3] Open Floor Inter-Agent Message Specification Version 0.9.4](https://github.com/open-voice-interoperability/docs/blob/main/specifications/ConversationEnvelope/1.0.0/InteroperableConvEnvSpec.md ) |{ "input" : ["text","pronun","voice"], "output" : ["text","ssml","pronun","voice","html"] }|*Default:* *{"input":["text"], "output":["text"]}*|
+`supportedLayers`|dict of string arrays|A dictionary containing lists of the dialogEvent layers supported as the input and the output of this capability. See [[2] Open Floor Dialog Event Object Specification Version 1.0.2](https://github.com/open-voice-interoperability/docs/blob/main/specifications/DialogEvents/1.0.2/InteropDialogEventSpecs.md) and [[3] Open Floor Inter-Agent Message Specification Version 0.9.4](https://github.com/open-voice-interoperability/docs/blob/main/specifications/ConversationEnvelope/1.0.1/InteroperableConvEnvSpec.md ) |{ "input" : ["text","pronun","voice"], "output" : ["text","ssml","pronun","voice","html"] }|*Default:* *{"input":["text"], "output":["text"]}*|
 
 ### 2. Schema
 
-The structure of a JSON conversation envelope is defined as a JSON Schema located at [https://github.com/open-voice-interoperability/docs/tree/main/schemas/assistant-manifest/1.0.0/assistant-manifest-schema.json]
+The structure of a JSON conversation envelope is defined as a JSON Schema located at [https://github.com/open-voice-interoperability/docs/tree/main/schemas/assistant-manifest/1.0.1/assistant-manifest-schema.json]
 
 ### 3. References
 
 * [1] https://www.ecma-international.org/publications-and-standards/standards/ecma-404/ ECMA-404 The JSON data interchange syntax
 * [2] https://github.com/open-voice-interoperability/docs/blob/main/specifications/DialogEvents/1.0.2/InteropDialogEventSpecs.md Open Floor Dialog Event Object Specification Version 1.0.2
-* [3] https://github.com/open-voice-interoperability/docs/blob/main/specifications/ConversationEnvelope/1.0.0/InteroperableConvEnvSpec.md Open Floor Inter-Agent Message Specification Version 1.0.0
+* [3] https://github.com/open-voice-interoperability/docs/blob/main/specifications/ConversationEnvelope/1.0.1/InteroperableConvEnvSpec.md Open Floor Inter-Agent Message Specification Version 1.0.1
 * [4] https://www.rfc-editor.org/rfc/rfc5646.txt RFC 5646. BCP 47. Tags for Identifying Languages.
 * [5] https://www.ietf.org/rfc/rfc4646.txt RFC 4646 Regarding Best Practice for Tags for Identifying Languages
 
@@ -196,7 +214,7 @@ mandatory elements|The mandatory elements that are required in the various eleme
 |Conversant or Assistant Manifest|Question: Is the manifest only for conversants with the role of an 'assistant' or should it be named a 'Conversant Manifest' and be capable of representing the identity and capabilities of all participants of a conversation including a user? </br> Answer: The manifest is intended to describe anything that can be a conversational endpoint. This could be a typical informational assistant, a discovery agent, or a user represented by a user proxy agent.  We decided to keep the term 'assistant' to cover all of these cases because it is sufficiently ambiguous, and the dominant use case will not be to describe human users. |
 |Authentication|Question: The Assistant Manifest specification specifically excludes the authentication of users/agents. Authentication is not only needed to know who the user is and if she is allowed to use the service provided by the assistant. Moreover, it is possible that the service an agent offers depend on subscriptions and may differ for different users.Answer: Later versions of the specification may need to directly address who is allowed to know what about each agent. Also the manifest may represent a good place to store information regarding the verifyable identity of the agents as a conversant.|
 |Uncleaer what serviceName is|_Question_: In the Assistant Manifest it did not become clear to me under which conditions the serviceName is used and what it is expected to add to conversationalName and synopsis.<br>_Answer_: It was agreed to rename this as 'department'|
-|Unclear what Role is|_Question_: Reading the Assistant Manifest, it did not become clear to me under which conditions the role of the identifaction is used,<br>_Answer:_Add a note onto 'synopsis' that this is a redundant field that summarizes the org/department/role of the agent|
+|Unclear what Role is|_Question_: Reading the Assistant Manifest, it did not become clear to me under which conditions the role of the identifaction is used,<br>_Answer:_ Add a note onto 'synopsis' that this is a redundant field that summarizes the org/department/role of the agent|
 |Support layers in/out|_Question_: The Assistant Manifest suggests to use supportedLayers to specify how the agent can interact with others. I would perceive this as modality. Actually, the abilities of agents may differ in this regard. Imagine an agent that receives text input to generate images. I was not able to find this separation in the current specification.<br>_Answer_: Yes. Changed  to:  "supportedLayers": {"input" : [   ],"output" : [  ] }|
 
 ### 6. Document Change Log
@@ -207,3 +225,5 @@ mandatory elements|The mandatory elements that are required in the various eleme
 |0.9.1|2024.11.26|-Rename 'serviceName' as 'department'<br>-Added note onto 'synpopsis'<br>-Add an 'Approach and Potential Uses' section.<br>-Added 'Authentication' in the Decision log.<br>-separated 'input' and 'ouput' supported layers.<br> -Clarified that URL is the unique key for an agent's identity.<br>-Removed inline schema and added reference instead. |
 |0.9.2|2025.05.13|-Rename _serviceEndpoint_ to _serviceUrl_<br>-Add _SpeakerUri_ to the _identification_ section<br> |
 |1.0.0|2025.05.14|-Release 0.9.2 as version 1.0.0|
+|1.0.1|TBD| - Added openFloorRoles  
+

@@ -22,44 +22,45 @@ class UtteranceEvent(Event):
         """Convert UtteranceEvent instance to JSON-compatible dictionary"""
         yield 'eventType', self.eventType
         if self.to is not None:
-            yield 'to', dict(self.to)
+            yield 'to', self.to.__json__()
         if self.reason is not None:
             yield 'reason', self.reason
         if self.parameters:
-            yield 'parameters', dict(self.parameters)
-
-@dataclass
-class ContextEvent(Event):
-    """Represents a context event providing additional information to recipient agents"""
-    eventType: str = "context"
-    dialogHistory: Optional[DialogHistory] = field(default=None, repr=False)
-    parameters: Parameters = field(default_factory=lambda: Parameters(dialogHistory=None))
-
-    def __post_init__(self):
-        if self.dialogHistory is not None:
-            self.parameters["dialogHistory"] = self.dialogHistory
-        if "dialogHistory" not in self.parameters or not isinstance(self.parameters["dialogHistory"], DialogHistory):
-            self.parameters["dialogHistory"] = DialogHistory()
-
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
-        """Convert ContextEvent instance to JSON-compatible dictionary"""
-        yield 'eventType', self.eventType
-        if self.to is not None:
-            yield 'to', dict(self.to)
-        if self.reason is not None:
-            yield 'reason', self.reason
-        if self.parameters:
-            yield 'parameters', dict(self.parameters)
+            yield 'parameters', self.parameters.__json__()
 
 @dataclass
 class InviteEvent(Event):
     """Represents an invitation for an agent to join the conversation"""
     eventType: str = "invite"
+    dialogHistory: Optional[DialogHistory] = field(default=None, repr=False)
+    parameters: Parameters = field(default_factory=Parameters)
+
+    def __post_init__(self):
+        """Initialize after dataclass initialization"""
+        if isinstance(self.parameters, dict):
+            self.parameters = Parameters(self.parameters)
+        if self.dialogHistory is not None:
+            self.parameters["dialogHistory"] = self.dialogHistory
+
+    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+        """Convert InviteEvent instance to JSON-compatible dictionary"""
+        yield 'eventType', self.eventType
+        if self.to is not None:
+            yield 'to', self.to.__json__()
+        if self.reason is not None:
+            yield 'reason', self.reason
+        if self.parameters:
+            yield 'parameters', self.parameters.__json__()
 
 @dataclass
 class UninviteEvent(Event):
     """Represents removing an agent from the conversation"""
     eventType: str = "uninvite"
+
+@dataclass
+class AcceptInviteEvent(Event):
+    """Represents accepting an invitation to join the conversation"""
+    eventType: str = "acceptInvite"
 
 @dataclass
 class DeclineInviteEvent(Event):
@@ -102,4 +103,9 @@ class GrantFloorEvent(Event):
 @dataclass
 class RevokeFloorEvent(Event):
     """Represents revoking the conversational floor from an agent"""
-    eventType: str = "revokeFloor" 
+    eventType: str = "revokeFloor"
+
+@dataclass
+class YieldFloorEvent(Event):
+    """Represents yielding the conversational floor"""
+    eventType: str = "yieldFloor"

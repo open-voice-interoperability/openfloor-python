@@ -1,24 +1,24 @@
 from typing import Optional, List, Tuple, Dict
-from .envelope import Event
 from abc import ABC, abstractmethod
-from openfloor import Parameters, DialogEvent, TextFeature, To, Sender, Manifest, Conversation, Envelope, Event, InviteEvent, UtteranceEvent, ContextEvent, UninviteEvent, DeclineInviteEvent, ByeEvent, GetManifestsEvent, PublishManifestsEvent, RequestFloorEvent, GrantFloorEvent, RevokeFloorEvent
+from events import Events
+from openfloor import Parameters, DialogEvent, TextFeature, To, Sender, Manifest, Conversation, Envelope, Event, InviteEvent, UtteranceEvent, UninviteEvent, AcceptInviteEvent, DeclineInviteEvent, ByeEvent, GetManifestsEvent, PublishManifestsEvent, RequestFloorEvent, GrantFloorEvent, RevokeFloorEvent, YieldFloorEvent
 
-class OpenFloorEvents(Event):
+class OpenFloorEvents(Events):
     """Base class for Open Floor agents that defines event handlers"""
     __events__ = (
         'on_envelope',
-        'on_utterance', 
-        'on_context', 
-        'on_invite', 
-        'on_uninvite', 
-        'on_decline_invite', 
-        'on_bye', 
-        'on_get_manifests', 
-        'on_publish_manifests', 
-        'on_request_floor', 
-        'on_grant_floor', 
+        'on_utterance',
+        'on_invite',
+        'on_uninvite',
+        'on_accept_invite',
+        'on_decline_invite',
+        'on_bye',
+        'on_get_manifests',
+        'on_publish_manifests',
+        'on_request_floor',
+        'on_grant_floor',
         'on_revoke_floor',
-        "on_yield_floor"
+        'on_yield_floor'
     )
 
 class OpenFloorAgent(OpenFloorEvents):
@@ -67,33 +67,30 @@ class OpenFloorAgent(OpenFloorEvents):
                 
         return result
 
-class BotAgent(OpenFloorAgent):    
+class BotAgent(OpenFloorAgent):
     """
     BotAgent is a simple bot agent.  It can be used as a class in its own right or subclassed to create more complex agents.
-    
+
     The class provides default event handlers that meet the Open Floor specification
-    requirements for a bot agent. 
-    
+    requirements for a bot agent.
+
     The default on_envelope handler processes events in a specific order, checking for invite events first if the bot is not already in
     a conversation.
-    
+
     Event handlers can be customized by subclassing and overriding the default handlers.
-    
+
     For a minimal implementation, all that is required is the following
-    - Implement a handler for invite events to send a greeting
-    - Implement a handler for bye events to send a farewell
-    - Implement a handler for utterance events to handle conversation
+    - Implement a handler for invite events to send a greeting (The base class has a default implementation)
+    - Implement a handler for utterance events to handle conversation (The base class has a default implementation)
     """
 
-    _current_context : List[ContextEvent] = []
-    _active_conversation : Optional[Conversation] = None    
+    _active_conversation : Optional[Conversation] = None
     _has_floor : bool = False
 
     def __init__(self, manifest: Manifest):
         super().__init__(manifest)
         self._active_conversation = None
         self._has_floor = False
-        self._current_context = []
         self.__attach_handlers__()
 
     def __attach_handlers__(self):
@@ -101,29 +98,29 @@ class BotAgent(OpenFloorAgent):
         self.on_envelope += self.bot_on_envelope
         self.on_invite += self.bot_on_invite
         self.on_utterance += self.bot_on_utterance
-        self.on_context += self.bot_on_context
         self.on_uninvite += self.bot_on_uninvite
         self.on_grant_floor += self.bot_on_grant_floor
         self.on_revoke_floor += self.bot_on_revoke_floor
         self.on_get_manifests += self.bot_on_get_manifests
-        
+
         print(f"registered handlers: {len(self)}")
-        
+
         """
         The following events are not handled because according the spec they can be ignored by a simple bot agent.
         self.on_bye
-        self.on_decline_invite  
-        self.on_yield_floor  
-        self.on_publish_manifests  
-        self.on_request_floor  
+        self.on_accept_invite
+        self.on_decline_invite
+        self.on_yield_floor
+        self.on_publish_manifests
+        self.on_request_floor
         """
-        
+
         # Map event types to their handler functions
         self._event_type_to_handler = {
             "invite": self.on_invite,
             "utterance": self.on_utterance,
-            "context": self.on_context,
             "uninvite": self.on_uninvite,
+            "acceptInvite": self.on_accept_invite,
             "declineInvite": self.on_decline_invite,
             "bye": self.on_bye,
             "getManifests": self.on_get_manifests,
@@ -149,13 +146,11 @@ class BotAgent(OpenFloorAgent):
 
     def bot_on_envelope(self, in_envelope: Envelope, out_envelope: Envelope) -> Envelope:
         print("Entering bot_on_envelope")
-        #clear the current context
-        self._current_context = []
-        
+
         #If we are already in a different conversation then raise an exception. This is a situation that simple agents should not allow.
         print(f"self._active_conversation: {self._active_conversation}")
-        print(f"in_envelope.conversation.id: {in_envelope.conversation.id}")    
-        
+        print(f"in_envelope.conversation.id: {in_envelope.conversation.id}")
+
         if (self._active_conversation is not None and self._active_conversation.id != in_envelope.conversation.id):
             raise Exception("Bot is already in a different conversation.  Cannot accept invite to a different conversation.")
 
@@ -179,10 +174,20 @@ class BotAgent(OpenFloorAgent):
 
     def bot_on_invite(self, event: InviteEvent, in_envelope: Envelope, out_envelope: Envelope) -> None:
         print("Entering bot_on_invite")
-       
+
         #Accept the invitation
         self._active_conversation = Conversation(id=in_envelope.conversation.id)
-        
+
+        #Send acceptInvite event (required by spec 1.1.0 section 2.1)
+        out_envelope.events.append(AcceptInviteEvent())
+
+        #Send a greeting utterance (required by spec 1.1.0 section 2.1)
+        greeting = DialogEvent(
+            speakerUri=self._manifest.identification.speakerUri,
+            features={"text": TextFeature(values=["Hello! How can I help you today?"])},
+        )
+        out_envelope.events.append(UtteranceEvent(dialogEvent=greeting))
+
         #automatically treat this as if the inviting agent had also granted the floor. (This is default behavior according to the spec)
         self.bot_on_grant_floor(
             GrantFloorEvent(
@@ -209,10 +214,6 @@ class BotAgent(OpenFloorAgent):
         )
         out_envelope.events.append(UtteranceEvent(dialogEvent=utterance))
 
-    def bot_on_context(self, event: ContextEvent, in_envelope: Envelope, out_envelope: Envelope) -> None:
-        print("Entering bot_on_context")
-        self._current_context.append(event)
-
     def bot_on_uninvite(self, event: UninviteEvent, in_envelope: Envelope, out_envelope: Envelope) -> None:
         print("Entering bot_on_uninvite")
         self._active_conversation = None  
@@ -221,9 +222,10 @@ class BotAgent(OpenFloorAgent):
         print("Entering bot_on_get_manifests")
         out_envelope.events.append(
             PublishManifestsEvent(
-                Parameters=Parameters(
-                    manifests={"servicingManifests" : [self._manifest], "discoveryManifests" : []}
-                )
+                parameters=Parameters({
+                    "servicingManifests": [self._manifest],
+                    "discoveryManifests": []
+                })
             )
         )
 
