@@ -95,9 +95,10 @@ select = [
 ignore = []
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["python/tests"]
+pythonpath = ["python/src"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=python/src --cov-report=term-missing" 
+addopts = "-v --cov=openfloor --cov-report=term-missing" 
 
 [tool.bumpver]
 current_version = "0.1.4"
